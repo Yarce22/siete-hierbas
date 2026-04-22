@@ -27,6 +27,12 @@ See `~/.claude/skills/_shared/skill-resolver.md` for the full resolution protoco
 | Browser automation, navigating pages, filling forms, taking screenshots, testing web apps | agent-browser | .claude/.agents/skills/agent-browser/SKILL.md |
 | Finding, discovering, or installing new agent skills | find-skills | .claude/.agents/skills/find-skills/SKILL.md |
 | Remotion video creation, React-based animations, compositions | remotion-best-practices | .claude/.agents/skills/remotion-best-practices/SKILL.md |
+| Creating a git commit at end of session or on request | caveman-commit | .claude/.agents/skills/caveman-commit/SKILL.md |
+| Supabase SDK usage, auth, RLS helpers, storage, realtime, edge functions | supabase | .claude/.agents/skills/supabase/SKILL.md |
+| PostgreSQL schema design, RLS policies, migrations, triggers, indexes on Supabase | supabase-postgres-best-practices | .claude/.agents/skills/supabase-postgres-best-practices/SKILL.md |
+| Open-ended exploration, design decisions, comparing approaches before implementing | brainstorming | .claude/.agents/skills/brainstorming/SKILL.md |
+| Fetching up-to-date library/framework docs by ID (e.g. `/vercel/next.js`) | context7 | .claude/.agents/skills/context7/SKILL.md |
+| "security review", "audit code for vulnerabilities", "check for injection/XSS/auth issues" | security-review | .claude/.agents/skills/security-review/SKILL.md |
 
 ## Compact Rules
 
@@ -114,10 +120,67 @@ Pre-digested rules per skill. Delegators copy matching blocks into sub-agent pro
 - Available domains: product, style, typography, color, landing, chart, ux
 - Command: `python3 src/ui-ux-pro-max/scripts/search.py "<query>" --domain <domain> --stack <stack>`
 
+### caveman-commit
+- Use Conventional Commits format: `<type>(<scope>): <subject>` — types: feat, fix, chore, docs, style, refactor, perf, test, build, ci, revert
+- Subject in imperative present ("add", not "added"), lowercase, no trailing period, <72 chars
+- NEVER add "Co-Authored-By" or AI attribution (global user rule)
+- Group by scope if many unrelated changes — ask user before splitting into multiple commits
+- Body explains WHY, not WHAT (diff shows what) — optional for simple changes
+- Run at end of session: stage relevant files (not `-A`), draft message, confirm with user before commit
+
+### supabase
+- Use `@supabase/ssr` (`createBrowserClient` / `createServerClient`) for Next.js — NEVER the legacy `@supabase/auth-helpers-nextjs`
+- Server client MUST use `cookies()` from `next/headers` with `getAll/setAll` pattern; wrap `setAll` in try/catch for RSC contexts
+- Always type the client: `createClient<Database>(...)` using generated types from `src/types/supabase.ts`
+- Regenerate types after EVERY schema change: `pnpm dlx supabase gen types typescript --project-id <id> > src/types/supabase.ts`
+- Use service role key ONLY on server (Route Handlers, Server Actions) — never expose to browser
+- Realtime: subscribe via `supabase.channel()` in client components; always unsubscribe in cleanup
+- Storage: use signed URLs for private buckets; public URLs only for truly public assets
+
+### supabase-postgres-best-practices
+- Enable RLS on EVERY table — no exceptions. Public tables still need explicit `for select using (true)` policy
+- Use `security definer` + `set search_path = ''` on helper functions that query RLS-protected tables (avoids recursion)
+- Use `auth.uid()` inside policies — never pass user IDs from the client
+- Separate policies by action (select / insert / update / delete) — clearer than combining
+- PKs: `uuid default gen_random_uuid()` for public-facing entities; `bigint generated always as identity` for monotonic counters
+- Money in integer (smallest unit) — never float. For COP, store pesos directly (no centavos)
+- Soft delete with `deleted_at timestamptz` — filter in views or RLS, never hard delete audit-critical data
+- Triggers for `updated_at` and audit logging; keep trigger functions minimal and idempotent
+- Indexes: on FKs, on columns used in RLS policies, on columns used in `where`/`order by`. Use partial indexes for soft-deleted filters
+- Migrations are append-only after first deploy — no editing past migrations
+
+### brainstorming
+- HARD GATE: do NOT implement, scaffold, or write code until user approves a design
+- Ask clarifying questions FIRST (goal, constraints, success criteria, non-goals)
+- Present 2-3 options with tradeoffs — never a single "obvious" answer
+- Use when user asks "how should we approach", "what do you think", "ideas for X"
+- End with explicit "¿Te alineo con la opción X?" before any build action
+
+### context7
+- Use to fetch CURRENT docs for libraries/frameworks when knowledge cutoff might be stale
+- Format: `resolve-library-id` first if unsure, then `get-library-docs` with ID like `/vercel/next.js`
+- Best for: breaking changes, new APIs, version-specific behavior (e.g. Next 16 proxy vs middleware)
+- Prefer over WebSearch for official library documentation — faster and more structured
+
+### security-review
+- Trigger on: auth flows, user input handling, DB queries, API endpoints, file uploads, env var handling
+- Check OWASP top 10: injection (SQL, XSS, command), broken auth, sensitive data exposure, CSRF, SSRF
+- Validate at system boundaries (user input, external APIs) — trust internal code
+- RLS is not optional for multi-tenant data — verify every new table has policies
+- Never log secrets, tokens, or PII; never commit `.env*` files
+- Prefer parameterized queries / ORM — no string interpolation in SQL
+
 ## Project Conventions
 
 | File | Path | Notes |
 |------|------|-------|
 | Global CLAUDE.md | ~/.claude/CLAUDE.md | Global conventions, personality, SDD orchestrator rules, Strict TDD enabled |
+| Project CLAUDE.md | ./CLAUDE.md | Stack (Next.js + Supabase), business rules, non-technical admin UX, Spanish domain |
+| Master plan | ./.atl/planning/master-plan.md | 8 fases: scaffolding → MVP e-commerce → MVP hostal → admin → analytics → UX helpers → launch → post-launch |
+| Admin UX ideas | ./.atl/planning/admin-dashboard-ideas.md | 30 ideas tiered S/A/B/C para dashboard amigable no-técnico |
+| DB docs | ./docs/database.md | Schema, RLS policies, cómo aplicar migrations y generar tipos |
+| Env docs | ./docs/environment.md | Variables requeridas (harness bloquea escribir .env* directamente) |
 
-No project-level CLAUDE.md found — project scaffolding not yet done.
+### Session-end convention
+- At end of every session (before `mem_session_summary`), invoke the `caveman-commit` skill to create a conventional-commits commit summarizing the session's changes.
+- Confirm the commit message with the user before executing when the session touched multiple scopes.
