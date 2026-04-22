@@ -4,7 +4,23 @@
 >
 > **Audiencia**: Alejo (dev) + futuros sub-agentes que trabajen en el proyecto.
 >
-> **Estado**: Pre-scaffolding. Proyecto vacío. Todo lo que sigue es planeación — nada implementado aún.
+> **Última actualización**: 2026-04-22
+
+---
+
+## Estado Actual
+
+| Fase | Estado | Commit |
+|------|--------|--------|
+| Fase 0 — Scaffolding | ✅ Completa | `aec814b` |
+| Fase 1 — MVP Tienda pública | ✅ Completa | `fb05cf2`, `8019d6b` |
+| **Fase 2 — MVP Hostal público** | ❌ **Pendiente** | — |
+| Fase 3 — Admin Dashboard base | ✅ Completa | `d1b1ce2`, `e215f75` |
+| Fase 4 — Analíticas y Reportes | ❌ Pendiente | — |
+| Fase 5 — UX Helpers | ❌ Pendiente | — |
+| Fase 6 — Pulido y Launch | ❌ Pendiente | — |
+
+> **Nota crítica**: Fase 3 se implementó antes de Fase 2. El home ya linkea a `/hostal` → **404 activo**. Fase 2 es la próxima prioridad.
 
 ---
 
@@ -24,11 +40,6 @@
 - Transferencia bancaria (productos + hostal)
 - **Toda coordinación por WhatsApp** (Click to Chat)
 - **Sin pasarela de pagos** en MVP
-
-### Por qué sin pasarela
-- Simplicidad inicial
-- Costo de integración (Wompi, PayU, Mercado Pago cobran comisión)
-- El dueño quiere contacto directo con el cliente
 
 ---
 
@@ -52,190 +63,321 @@
 - Ahorra integrar NextAuth, Cloudinary y un WebSocket server por separado.
 - RLS (Row Level Security) da permisos a nivel de DB — más seguro que lógica en app.
 - Supabase CLI permite migrations versionadas en git.
-- Tradeoff aceptado: cierto lock-in con Supabase. Mitigación: el core es PostgreSQL estándar, migrar a otra DB siempre es posible.
+- Tradeoff aceptado: cierto lock-in con Supabase. Mitigación: el core es PostgreSQL estándar.
 
 ### 2.4 WhatsApp Click to Chat (no Business API)
-**Decisión**: URL `https://wa.me/573XXXXXXXXX?text=mensaje_predefinido`.
-**Razón**: Business API requiere aprobación de Meta, tiene costo por conversación, y es overkill para volumen inicial. Click to Chat funciona desde día 1, gratis.
+**Decisión**: URL `https://wa.me/57XXXXXXXXX?text=mensaje_predefinido`.
+**Razón**: Business API requiere aprobación de Meta, tiene costo por conversación. Click to Chat funciona desde día 1, gratis.
 
 **Upgrade path**: Si el volumen crece, migrar a Business API con Twilio/360dialog.
 
 ### 2.5 Soft Delete en todo el dominio
-**Decisión**: Nunca hacer DELETE físico. Marcar `deletedAt`.
+**Decisión**: Nunca hacer DELETE físico. Marcar `deleted_at`.
 **Razón**: Admin no-técnico = más errores humanos. Necesitamos "papelera de reciclaje" y auditoría.
 
 ### 2.6 Audit log de cambios del admin
 **Decisión**: Tabla `audit_log` registrando quién cambió qué y cuándo.
-**Razón**: Dos administradores → necesitamos trazabilidad si hay discrepancias ("¿quién cambió el precio de este producto?").
+**Razón**: Dos administradores → trazabilidad si hay discrepancias.
 
 ---
 
-## 3. Modelo de Datos (preliminar)
+## 3. Schema de Base de Datos (implementado)
 
-### Dominio E-commerce
-
-```
-Producto
-├── id, nombre, slug, descripcion, categoriaId
-├── imagenes[] (Cloudinary URLs)
-├── destacado: bool
-├── deletedAt, createdAt, updatedAt
-└── variantes[]
-    └── VarianteProducto
-        ├── id, productoId, nombre (ej: "250ml"), sku
-        ├── precio (COP, entero, sin decimales)
-        ├── stock, stockMinimo
-        └── deletedAt
-
-Categoria
-├── id, nombre, slug, icono, orden
-└── deletedAt
-
-Pedido
-├── id, numeroOrden (correlativo humano)
-├── clienteNombre, clienteTelefono, clienteEmail?
-├── direccionEntrega?
-├── metodoPago: 'efectivo' | 'transferencia'
-├── estado: 'pendiente_whatsapp' | 'confirmado' | 'en_camino' | 'entregado' | 'cancelado'
-├── total (COP)
-├── notas?
-└── items[]
-    └── ItemPedido
-        ├── productoId, varianteId, cantidad
-        ├── precioUnitario (snapshot al momento del pedido)
-        └── subtotal
-```
-
-### Dominio Hostal
+Tablas existentes en `supabase/migrations/20260421100000_schema_base.sql`:
 
 ```
-Habitacion
-├── id, nombre (ej: "Habitación Lavanda"), tipo
-├── capacidad (personas), precioNoche (COP)
-├── descripcion, imagenes[], amenidades[]
-└── deletedAt
-
-Reserva
-├── id, numeroReserva
-├── habitacionId
-├── huespedNombre, huespedTelefono, huespedEmail?
-├── fechaCheckIn, fechaCheckOut
-├── numeroHuespedes
-├── estado: 'pendiente' | 'confirmada' | 'en_curso' | 'completada' | 'cancelada'
-├── total (COP)
-├── metodoPago, notas?
-└── deletedAt
+profiles              — extiende auth.users, tiene nombre + rol (admin|superadmin)
+categorias            — id, nombre, slug, icono, orden, deleted_at
+productos             — id, nombre, slug, descripcion, categoria_id, destacado, deleted_at
+producto_imagenes     — producto_id, url, alt_text, orden
+producto_variantes    — producto_id, nombre, sku, precio (COP int), stock, stock_minimo, deleted_at
+pedidos               — numero_orden (identity), cliente_*, metodo_pago, estado, total, deleted_at
+pedido_items          — pedido_id, producto_id, variante_id, cantidad, precio_unitario, subtotal
+habitaciones          — id, nombre, slug, tipo, capacidad, precio_noche (COP int), descripcion, amenidades (text[]), deleted_at
+habitacion_imagenes   — habitacion_id, url, alt_text, orden
+reservas              — numero_reserva (identity), habitacion_id, huesped_*, fecha_check_in, fecha_check_out, numero_huespedes, estado, total, metodo_pago, deleted_at
+audit_log             — usuario_id, entidad, entidad_id, accion, cambios (jsonb), created_at
 ```
 
-### Dominio Admin
-
-```
-Usuario
-├── id, nombre, email, passwordHash
-├── rol: 'admin' | 'superadmin'
-└── deletedAt
-
-AuditLog
-├── id, usuarioId, entidad, entidadId
-├── accion: 'create' | 'update' | 'delete' | 'restore'
-├── cambios (JSONB)
-└── createdAt
-```
+Enums: `rol_usuario`, `metodo_pago`, `estado_pedido`, `estado_reserva`, `accion_audit`
 
 ---
 
 ## 4. Fases del Proyecto
 
-### Fase 0 — Fundamentos (1-2 días)
-- [ ] Scaffolding Next.js 15 (TypeScript, Tailwind, App Router, src/)
-- [ ] Inicializar shadcn/ui
-- [ ] Instalar Supabase SDK (`@supabase/supabase-js`, `@supabase/ssr`)
-- [ ] Setup clientes Supabase (server, browser, middleware)
-- [ ] Supabase CLI init + proyecto Supabase creado (dev + prod)
-- [ ] Variables de entorno + `.env.example`
-- [ ] Instalar Zod + react-hook-form + next-intl
-- [ ] Linter, formatter (Prettier), hooks (husky + lint-staged)
-- [ ] Testing: Vitest (unit) + Playwright (e2e) config inicial
-- [ ] CI básico (GitHub Actions: typecheck + lint + test)
-- [ ] Re-run `/sdd-init` para activar Strict TDD
+### ✅ Fase 0 — Scaffolding (completa)
+Next.js 16, Tailwind 4, Supabase SDK, shadcn/ui, Vitest, Playwright, GitHub Actions.
 
-**Entregable**: Proyecto que corre en local (`pnpm dev`), conecta a Supabase, tests vacíos pasan.
+### ✅ Fase 1 — MVP Tienda pública (completa)
+Catálogo, filtros por categoría, detalle con galería y variantes, carrito (localStorage), checkout → WhatsApp link.
 
-### Fase 1 — MVP E-commerce público (1 semana)
-- [ ] Schema Prisma: Producto, Variante, Categoria
-- [ ] API: endpoints públicos GET de productos/categorías
-- [ ] Web: Home con productos destacados
-- [ ] Web: Catálogo con filtros (categoría, precio)
-- [ ] Web: Detalle de producto con galería + variantes
-- [ ] Web: Carrito (localStorage + Context)
-- [ ] Web: Checkout que genera link WhatsApp
-- [ ] Seed de datos de prueba
+### ✅ Fase 3 — Admin Dashboard base (completa — implementada fuera de orden)
+Login Supabase Auth, sidebar, CRUD productos con imágenes y variantes, CRUD categorías, CRUD habitaciones con imágenes, gestión de pedidos (lista + detalle + cambio estado), gestión de reservas.
 
-**Entregable**: Cliente puede navegar, agregar al carrito y contactar por WhatsApp.
+---
 
-### Fase 2 — MVP Hostal público (3-4 días)
-- [ ] Schema Prisma: Habitacion, Reserva
-- [ ] API: endpoints públicos de habitaciones
-- [ ] Web: Sección "Hostal" con listado de habitaciones
-- [ ] Web: Detalle de habitación + calendario de disponibilidad
-- [ ] Web: Formulario de reserva → WhatsApp
+### ❌ Fase 2 — MVP Hostal público (PRÓXIMA — resuelve 404 activo)
 
-**Entregable**: Cliente puede ver habitaciones, consultar disponibilidad y reservar por WhatsApp.
+**Entregable**: El cliente puede ver habitaciones disponibles y contactar por WhatsApp para reservar.
 
-### Fase 3 — Admin Dashboard base (1 semana)
-- [ ] Autenticación NextAuth + JWT al API
-- [ ] Layout admin con sidebar + tooltips en cada sección
-- [ ] Dashboard home con "Buenos días, [nombre]. Hoy tenés X pedidos..."
-- [ ] CRUD Productos con validaciones y tooltips `?`
-- [ ] Upload de imágenes a Cloudinary (drag & drop)
-- [ ] CRUD Categorías
-- [ ] CRUD Habitaciones
-- [ ] Gestión de Pedidos (lista + detalle + cambio de estado)
-- [ ] Gestión de Reservas (lista + calendario)
-- [ ] Vista previa en tiempo real al editar productos
+**Archivos a crear:**
 
-**Entregable**: Admin operable para carga de productos, gestión de pedidos y reservas.
+```
+src/lib/queries/habitaciones.ts
+  └── getHabitaciones()                    — lista para la página de listado
+  └── getHabitacionBySlug(slug)            — detalle de habitación
+  └── getDisponibilidad(habitacionId, checkIn, checkOut)  — verifica si hay reservas que chocan
 
-### Fase 4 — Analíticas y Reportes (4-5 días)
-- [ ] Endpoint API de métricas (con cache)
-- [ ] Gráficos de ingresos (día/semana/mes/año) — Recharts
-- [ ] Top productos más vendidos (filtros de período)
-- [ ] Histórico de ventas con búsqueda y filtros
-- [ ] Métricas del hostal (ocupación, ingresos, huéspedes)
-- [ ] Export a CSV/Excel para contabilidad
+src/lib/whatsapp.ts (actualizar)
+  └── generarLinkReserva({ habitacion, nombre, telefono, checkIn, checkOut, huespedes })
 
-**Entregable**: Dueños ven el pulso del negocio de un vistazo.
+src/components/public/habitacion-card.tsx  — card para el listado
+src/components/public/galeria-habitacion.tsx  — galería de imágenes (reusar patrón de galeria-producto)
+src/components/public/reserva-form.tsx     — formulario "client": fechas + nombre + tel → WA link
 
-### Fase 5 — UX Helpers (3-4 días)
-- [ ] Tour de onboarding (react-joyride o similar)
-- [ ] Sistema de tooltips contextual (`?` hover en todos los campos)
-- [ ] Búsqueda global (Cmd+K) en admin
-- [ ] Notificaciones de stock bajo (email + dashboard)
-- [ ] Plantillas de productos (acelerador de carga)
-- [ ] Soft delete con "Papelera de Reciclaje"
-- [ ] Audit log visible en cada entidad
+src/app/(public)/hostal/page.tsx           — RSC, lista habitaciones disponibles
+src/app/(public)/hostal/[slug]/page.tsx    — RSC, detalle + formulario de reserva
+```
+
+**Lógica de disponibilidad (MVP simple):**
+```sql
+-- Habitación NO disponible si existe reserva que se superpone:
+SELECT id FROM reservas
+WHERE habitacion_id = $id
+  AND estado NOT IN ('cancelada')
+  AND fecha_check_in < $fecha_check_out
+  AND fecha_check_out > $fecha_check_in
+  AND deleted_at IS NULL
+LIMIT 1
+```
+Si hay resultado → mostrar "No disponible para esas fechas, contactanos por WhatsApp".
+
+**Mensaje WhatsApp de reserva:**
+```
+Hola! Me gustaría reservar la {nombre}.
+• Check-in: {fecha_check_in}
+• Check-out: {fecha_check_out}
+• Huéspedes: {numero_huespedes}
+• Mi nombre: {huesped_nombre}
+Total estimado: ${total} COP
+
+Por favor confirmen disponibilidad.
+```
+
+**UX de la página hostal:**
+- Header con foto de portada del hostal
+- Filtros: tipo de habitación, capacidad
+- Cards con: imagen, nombre, tipo, capacidad, precio/noche, amenidades clave
+- Detalle: galería fullscreen, descripción, amenidades completas, disponibilidad, formulario de reserva
+
+---
+
+### ❌ Fase 4 — Analíticas y Reportes
+
+**Entregable**: Los dueños ven el pulso del negocio de un vistazo.
+
+**Nueva ruta:** `/admin/analiticas` — accessible desde sidebar (link nuevo).
+
+**Archivos a crear:**
+
+```
+src/lib/queries/metricas.ts
+  └── getIngresosPorPeriodo(periodo: 'semana'|'mes'|'año')
+        → { fecha: string, ingresos_tienda: number, ingresos_hostal: number }[]
+  └── getTopProductos(periodo: 'semana'|'mes'|'año')
+        → { nombre: string, unidades_vendidas: number, ingresos: number }[]
+  └── getHistorialPedidos(page, filtros)
+        → pedidos paginados con cliente + items
+  └── getMetricasHostal(periodo)
+        → { total_reservas, ingresos_total, tasa_ocupacion_pct, proximas_reservas[] }
+  └── getAlertasStockBajo()
+        → { producto, variante, stock_actual, stock_minimo }[]  ← también usada en dashboard
+
+src/components/admin/analiticas/
+  ├── periodo-selector.tsx    — "client": tabs Semana / Mes / Año
+  ├── ingresos-chart.tsx      — "client": Recharts AreaChart responsive
+  ├── top-productos-chart.tsx — "client": Recharts BarChart horizontal
+  ├── tabla-ventas.tsx        — "client": TanStack Table + filtros fecha/estado
+  └── export-csv-btn.tsx      — "client": genera CSV en memoria y dispara download
+
+src/app/(admin)/admin/analiticas/page.tsx  — RSC con Suspense por sección
+```
+
+**Queries SQL para métricas (aproximación):**
+
+```sql
+-- Ingresos tienda por día (últimos 30 días)
+SELECT date_trunc('day', created_at) AS fecha, SUM(total) AS ingresos
+FROM pedidos
+WHERE estado NOT IN ('cancelado') AND deleted_at IS NULL
+  AND created_at >= now() - interval '30 days'
+GROUP BY 1 ORDER BY 1;
+
+-- Top productos (últimos 30 días)
+SELECT p.nombre, SUM(pi.cantidad) AS unidades, SUM(pi.subtotal) AS ingresos
+FROM pedido_items pi
+JOIN productos p ON p.id = pi.producto_id
+JOIN pedidos ped ON ped.id = pi.pedido_id
+WHERE ped.estado NOT IN ('cancelado') AND ped.deleted_at IS NULL
+  AND ped.created_at >= now() - interval '30 days'
+GROUP BY p.id, p.nombre
+ORDER BY unidades DESC LIMIT 10;
+
+-- Tasa de ocupación hostal
+SELECT
+  COUNT(DISTINCT r.id) AS reservas,
+  SUM(r.fecha_check_out - r.fecha_check_in) AS noches_reservadas,
+  (COUNT(DISTINCT h.id) * 30) AS noches_disponibles -- 30 días del período
+FROM reservas r
+CROSS JOIN habitaciones h
+WHERE r.estado NOT IN ('cancelada') AND r.deleted_at IS NULL
+  AND h.deleted_at IS NULL;
+```
+
+**Caching:** `unstable_cache` de Next.js con `revalidate: 3600` (1 hora) — datos analíticos no necesitan ser real-time.
+
+**Export CSV:** Sin librería externa. Generar en cliente:
+```ts
+const csv = [headers, ...rows.map(r => Object.values(r).join(','))].join('\n')
+const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
+// ﻿ = BOM para Excel en Windows
+```
+
+**Sidebar update:** Agregar "Analíticas" con ícono `BarChart3` entre "Pedidos" y la sección Hostal.
+
+**Actualización del dashboard home:**
+Agregar a `src/app/(admin)/admin/page.tsx`:
+- Alerta de stock bajo si `getAlertasStockBajo()` devuelve items
+- Ingresos del día (suma de pedidos de hoy con estado != cancelado)
+
+---
+
+### ❌ Fase 5 — UX Helpers
 
 **Entregable**: El admin es genuinamente usable sin capacitación técnica.
 
-### Fase 6 — Pulido y Launch (3-4 días)
-- [ ] SEO (metadata dinámica, sitemap, robots.txt)
-- [ ] Open Graph para compartir en redes
-- [ ] Accesibilidad WCAG AA (auditoría con axe)
-- [ ] Performance (Lighthouse > 90 en web pública)
-- [ ] i18n español/inglés (next-intl) — solo en web pública
-- [ ] Deploy web (Vercel), api (Railway/Render), DB (Neon/Railway)
-- [ ] Dominio + SSL
-- [ ] Monitoreo básico (Sentry)
+**Librerías nuevas:**
+- `cmdk` — búsqueda global Cmd+K (0.2 MB gzip)
+- `driver.js` — tour onboarding (más liviano que react-joyride)
 
-**Entregable**: Plataforma en producción.
+```bash
+pnpm add cmdk driver.js
+```
 
-### Fase 7 — Post-launch (roadmap)
-- Facturación electrónica DIAN
-- Sistema de reseñas
-- Programa de fidelización
-- App móvil (React Native reutilizando API)
-- Pasarela de pagos (Wompi / Mercado Pago)
-- WhatsApp Business API
+**Items en orden de prioridad:**
+
+#### 5.1 — Alertas de stock bajo (Fase 5 completa con Fase 4)
+- Query `getAlertasStockBajo()` ya planeada en Fase 4
+- Badge rojo en sidebar "Productos (3 alertas)" cuando hay variantes con `stock <= stock_minimo`
+- Card de alerta en dashboard home
+
+#### 5.2 — Búsqueda global Cmd+K
+```
+src/components/admin/busqueda-global.tsx  — "client": cmdk palette
+  Busca en: productos (nombre, slug), pedidos (numero_orden, cliente_nombre), 
+            reservas (numero_reserva, huesped_nombre), habitaciones (nombre)
+  Server Action: buscarGlobal(query) → resultados por categoría
+```
+
+#### 5.3 — Papelera de reciclaje
+```
+src/app/(admin)/admin/papelera/page.tsx  — lista entidades con deleted_at != null
+  Tabs: Productos | Categorías | Habitaciones | Pedidos
+  Botón "Restaurar" → Server Action que setea deleted_at = null
+  Botón "Eliminar definitivamente" → DELETE real (solo superadmin)
+```
+
+#### 5.4 — Audit log visible
+```
+src/components/admin/historial-cambios.tsx  — lista de audit_log por entidad
+  Formato: "{nombre} {accion} {entidad} — {tiempo relativo}"
+  Ej: "Ana actualizó el precio de $23.000 a $25.000 — hace 2 horas"
+  
+Agregar como tab "Historial" en:
+  - src/app/(admin)/admin/productos/[id]/page.tsx
+  - src/app/(admin)/admin/pedidos/[id]/page.tsx  
+  - src/app/(admin)/admin/reservas/[id]/page.tsx  (a crear)
+```
+
+#### 5.5 — Tour de onboarding
+```
+src/components/admin/onboarding-tour.tsx  — "client": driver.js
+  Se activa si localStorage('onboarding_done') !== 'true'
+  Pasos: sidebar → nuevo producto → pedidos → reservas → analíticas
+  Al finalizar: set localStorage + marcar en profiles (campo onboarding_completado bool)
+  
+  Migración necesaria: 
+  ALTER TABLE profiles ADD COLUMN onboarding_completado boolean DEFAULT false;
+```
+
+#### 5.6 — Plantillas de productos
+```
+src/components/admin/plantillas-producto.tsx  — modal con opciones
+  Plantillas hardcodeadas (no en DB): 
+    "Aceite esencial" → campos: nombre, precio (vacío), variantes: "10ml", "30ml"
+    "Té en hojas"    → variantes: "50g", "100g", "250g"
+    "Crema"          → variantes: "60ml", "120ml"
+    "Tintura"        → variantes: "30ml", "60ml"
+  Al seleccionar → pre-llena ProductoForm
+```
+
+---
+
+### ❌ Fase 6 — Pulido y Launch
+
+**Entregable**: Plataforma en producción, performante y accesible.
+
+#### 6.1 — SEO
+```
+src/app/(public)/tienda/[slug]/page.tsx   — generateMetadata() con producto.nombre + descripcion
+src/app/(public)/hostal/[slug]/page.tsx   — generateMetadata() con habitacion.nombre
+src/app/(public)/layout.tsx               — metadata base (title template, description)
+src/app/sitemap.ts                        — sitemap dinámico (productos + habitaciones)
+src/app/robots.ts                         — robots.txt (bloquear /admin)
+public/og-default.jpg                     — imagen Open Graph por defecto
+```
+
+#### 6.2 — i18n (next-intl)
+next-intl ya instalado. Activar:
+```
+src/i18n/routing.ts          — defineRouting({ locales: ['es', 'en'], defaultLocale: 'es' })
+src/middleware.ts             — wrappear con createMiddleware
+messages/es.json             — strings en español
+messages/en.json             — strings en inglés (solo tienda pública + hostal)
+```
+**Scope del i18n**: SOLO rutas públicas (`/tienda`, `/hostal`). Admin SIEMPRE en español.
+
+#### 6.3 — Performance
+- `next/image` en todos los `<img>` que falten (con width/height explícitos)
+- `Suspense` + skeleton loading en secciones de datos
+- `loading.tsx` por ruta en admin
+- Metadata `dynamic = 'force-static'` en páginas que pueden pre-renderizarse
+
+#### 6.4 — Accesibilidad
+- Auditoría con `axe-core` (instalar como devDependency)
+- Asegurar contraste 4.5:1 en texto primario
+- `aria-label` en todos los botones icono
+- Focus visible en todos los elementos interactivos
+- Navegación por Tab completa en formularios
+
+#### 6.5 — Deploy
+```
+Vercel (frontend):
+  - Connect GitHub repo → auto-deploy main
+  - Env vars: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+  - Domain: configurar dominio del cliente
+
+Supabase Cloud:
+  - Crear proyecto en app.supabase.com
+  - supabase db push (aplicar migrations)
+  - supabase seed (datos iniciales)
+  - Storage bucket "productos" + "habitaciones" (policy: public read)
+```
+
+#### 6.6 — Monitoreo
+- Sentry: `@sentry/nextjs` para error tracking
+- Vercel Analytics (ya incluido en plan Vercel)
+- Lighthouse CI en GitHub Actions (score mínimo 85)
 
 ---
 
@@ -244,12 +386,13 @@ AuditLog
 | Riesgo | Impacto | Mitigación |
 |--------|---------|------------|
 | Admin no-técnico rompe datos por accidente | Alto | Soft delete + confirmaciones + undo + audit log |
-| Dos admins editan el mismo producto a la vez | Medio | Optimistic locking con `updatedAt` o WebSocket notifications |
+| Dos admins editan el mismo producto a la vez | Medio | Optimistic locking con `updatedAt` |
 | Cliente confundido con checkout por WhatsApp | Medio | UX clara: "Al hacer click se abre WhatsApp con tu pedido ya armado" |
-| Stock desincronizado (venta offline + online) | Alto | Modo "ajuste rápido" de stock en admin + alertas de stock bajo |
-| Traducciones (es/en) se vuelven inconsistentes | Medio | next-intl con archivos JSON versionados + revisión en PR |
-| Imágenes pesadas degradan performance | Medio | Cloudinary con transformaciones automáticas + `next/image` |
-| Dueño quiere cambios que rompen el MVP | Alto | SDD: toda feature grande pasa por `/sdd-new` con propuesta aprobada |
+| Stock desincronizado (venta offline + online) | Alto | Modo "ajuste rápido" de stock + alertas stock bajo |
+| Traducciones (es/en) se vuelven inconsistentes | Medio | next-intl con archivos JSON versionados |
+| Imágenes pesadas degradan performance | Medio | Supabase Storage + `next/image` con transformaciones |
+| Dueño quiere cambios que rompen el MVP | Alto | SDD: toda feature grande pasa por `/sdd-new` |
+| `/hostal` muestra 404 antes de Fase 2 | Alto | **Resolver en próxima sesión de código** |
 
 ---
 
@@ -259,17 +402,16 @@ AuditLog
 2. Un cliente puede completar el flujo compra → WhatsApp en **< 90 segundos**.
 3. El admin funciona correctamente en **celular** (testeado en iOS y Android).
 4. **Lighthouse score > 85** en páginas públicas clave (home, detalle producto).
-5. **Zero data loss** incidents en los primeros 3 meses (gracias a soft delete + backups).
+5. **Zero data loss** en los primeros 3 meses (gracias a soft delete + backups).
 
 ---
 
-## 7. Próximos Pasos Inmediatos
+## 7. Próximos Pasos
 
-1. **Validar este plan con el dueño** — ¿algo falta? ¿prioridades correctas?
-2. **Escoger proveedores**: Cloudinary plan, hosting DB (Neon/Railway/Supabase), dominio.
-3. **Conseguir número de WhatsApp del negocio** (ideal: línea dedicada).
-4. **Paleta de colores y tipografía** — usar `ui-ux-pro-max` para elegir (estética herboristería + hostal rural, colores tierra/verde).
-5. **Arrancar Fase 0**: scaffolding.
+1. **Implementar Fase 2** — hostal público (cierra 404, es la blocker más urgente)
+2. **Implementar Fase 4** — analíticas (recharts + tanstack ya instalados, no hay nuevas deps)
+3. **Implementar Fase 5** — UX helpers (pnpm add cmdk driver.js antes de arrancar)
+4. **Implementar Fase 6** — pulido + deploy (coordinar con el dueño: dominio, número WA, foto hostal)
 
 ---
 
