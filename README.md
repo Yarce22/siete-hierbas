@@ -81,18 +81,33 @@ docs/
 
 ## Estado actual
 
-**Fase 0 — Scaffolding** (en curso)
+**Fase 0 — Scaffolding** ✅
 
 - [x] Next.js 16 + TypeScript + Tailwind 4 + App Router
 - [x] shadcn/ui inicializado (button, input, label, card, dialog, sonner, dropdown-menu, tooltip, skeleton, badge, separator, sheet, tabs)
-- [x] Supabase SDK + clientes (server, browser, middleware)
-- [x] Middleware de auth para rutas `/admin`
+- [x] Supabase SDK + clientes (server, browser, session helper)
+- [x] **Proxy** de auth para rutas `/admin` (Next 16 renombró `middleware` → `proxy`)
 - [x] Estructura de carpetas
-- [x] Página home con branding básico
+- [x] Schema base SQL (`supabase/migrations/20260421100000_schema_base.sql`)
+- [x] Seed inicial con categorías (`supabase/seed.sql`)
+- [x] Documentación de DB en `docs/database.md`
 
-**Pendiente**:
-- [ ] Crear proyecto en Supabase y conectar (`.env.local`)
-- [ ] Supabase CLI init + primera migration (schema base)
+**Fase 1 — MVP E-commerce público** (en curso)
+
+- [x] Tipos placeholder de la DB (`src/types/supabase.ts`)
+- [x] Queries base: `getCategorias`, `getProductos` (con filtro por categoría)
+- [x] Helper de formato COP (`src/lib/format.ts`)
+- [x] Layout público `(public)` con header + footer + `CartProvider`
+- [x] Carrito con persistencia en `localStorage` (`cart-provider.tsx`)
+- [x] Página `/tienda` con grid de productos y filtro por categoría
+- [ ] Página `/tienda/[slug]` detalle de producto con variantes y galería
+- [ ] Página `/checkout` que genera deep link a WhatsApp
+- [ ] Home con productos destacados
+
+**Pendiente de setup** (user tasks):
+- [ ] Aplicar migration al proyecto Supabase (ver `docs/database.md`)
+- [ ] Generar tipos TS desde la DB → `src/types/supabase.ts` (reemplaza el placeholder)
+- [ ] Crear primer admin
 - [ ] Testing setup (Vitest + Playwright)
 - [ ] Prettier + husky + lint-staged
 - [ ] CI básico (GitHub Actions)
