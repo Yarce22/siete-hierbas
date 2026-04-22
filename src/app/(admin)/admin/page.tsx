@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
-import { Package, Tags, ShoppingBag, BedDouble, CalendarCheck } from "lucide-react";
+import { Package, Tags, ShoppingBag, BedDouble, CalendarCheck, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
+import { getAlertasStockBajo } from "@/lib/queries/metricas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCOP } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Dashboard · Admin" };
 
 async function getStats() {
   const supabase = await createClient();
+
+  const hoyInicio = new Date();
+  hoyInicio.setHours(0, 0, 0, 0);
 
   const [
     { count: productos },
@@ -17,6 +22,7 @@ async function getStats() {
     { count: habitaciones },
     { count: reservasActivas },
     { data: perfil },
+    { data: ingresosHoy },
   ] = await Promise.all([
     supabase.from("productos").select("*", { count: "exact", head: true }).is("deleted_at", null),
     supabase.from("categorias").select("*", { count: "exact", head: true }).is("deleted_at", null),
@@ -24,7 +30,10 @@ async function getStats() {
     supabase.from("habitaciones").select("*", { count: "exact", head: true }).is("deleted_at", null),
     supabase.from("reservas").select("*", { count: "exact", head: true }).in("estado", ["confirmada", "en_curso"]).is("deleted_at", null),
     supabase.from("profiles").select("nombre").maybeSingle(),
+    supabase.from("pedidos").select("total").gte("created_at", hoyInicio.toISOString()).neq("estado", "cancelado").is("deleted_at", null),
   ]);
+
+  const totalHoy = (ingresosHoy ?? []).reduce((s: number, p: { total: number }) => s + p.total, 0);
 
   return {
     productos: productos ?? 0,
@@ -33,6 +42,7 @@ async function getStats() {
     habitaciones: habitaciones ?? 0,
     reservasActivas: reservasActivas ?? 0,
     nombre: perfil?.nombre ?? "Admin",
+    ingresosHoy: totalHoy,
   };
 }
 
@@ -52,7 +62,7 @@ const statsConfig = [
 ];
 
 export default async function AdminPage() {
-  const stats = await getStats();
+  const [stats, alertas] = await Promise.all([getStats(), getAlertasStockBajo()]);
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
@@ -68,7 +78,39 @@ export default async function AdminPage() {
             year: "numeric",
           })}
         </p>
+        {stats.ingresosHoy > 0 && (
+          <p className="mt-1 text-sm text-green-700 dark:text-green-400">
+            Ingresos de hoy: <span className="font-semibold">{formatCOP(stats.ingresosHoy)}</span>
+          </p>
+        )}
       </div>
+
+      {alertas.length > 0 && (
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-950/30">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400" />
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+              {alertas.length} {alertas.length === 1 ? "producto con stock bajo" : "productos con stock bajo"}
+            </p>
+          </div>
+          <ul className="mt-2 space-y-0.5 pl-6 text-xs text-amber-700 dark:text-amber-400">
+            {alertas.slice(0, 3).map((a) => (
+              <li key={`${a.producto_id}-${a.variante_nombre}`}>
+                <Link href={`/admin/productos/${a.producto_id}`} className="hover:underline">
+                  {a.producto_nombre} ({a.variante_nombre}) — quedan {a.stock} {a.stock === 1 ? "unidad" : "unidades"}
+                </Link>
+              </li>
+            ))}
+            {alertas.length > 3 && (
+              <li>
+                <Link href="/admin/productos" className="hover:underline">
+                  +{alertas.length - 3} más →
+                </Link>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
 
       <div className="space-y-6">
         <section>
