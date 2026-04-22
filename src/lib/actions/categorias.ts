@@ -33,7 +33,7 @@ export async function crearCategoria(formData: FormData) {
   };
 
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const supabase = await createClient();
   const { error } = await supabase.from("categorias").insert(parsed.data);
@@ -57,7 +57,7 @@ export async function actualizarCategoria(id: string, formData: FormData) {
   };
 
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const supabase = await createClient();
   const { error } = await supabase

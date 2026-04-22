@@ -44,7 +44,7 @@ export async function crearProducto(formData: FormData) {
 
   const parsedProducto = productoSchema.safeParse(rawProducto);
   if (!parsedProducto.success)
-    return { error: parsedProducto.error.errors[0].message };
+    return { error: parsedProducto.error.issues[0].message };
 
   const supabase = await createClient();
 
@@ -97,7 +97,7 @@ export async function actualizarProducto(id: string, formData: FormData) {
 
   const parsedProducto = productoSchema.safeParse(rawProducto);
   if (!parsedProducto.success)
-    return { error: parsedProducto.error.errors[0].message };
+    return { error: parsedProducto.error.issues[0].message };
 
   const supabase = await createClient();
 
@@ -148,7 +148,7 @@ export async function crearVariante(productoId: string, formData: FormData) {
   };
 
   const parsed = varianteSchema.safeParse(raw);
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const supabase = await createClient();
   const { error } = await supabase.from("producto_variantes").insert({

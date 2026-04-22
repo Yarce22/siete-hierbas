@@ -22,7 +22,7 @@ export async function generateMetadata({
 
   return {
     title: producto.nombre,
-    description: producto.descripcion_corta ?? undefined,
+    description: producto.descripcion ?? undefined,
   };
 }
 
@@ -76,11 +76,6 @@ export default async function ProductoPage({
             <h1 className="text-3xl font-semibold tracking-tight">
               {producto.nombre}
             </h1>
-            {producto.descripcion_corta && (
-              <p className="text-lg text-zinc-600 dark:text-zinc-400">
-                {producto.descripcion_corta}
-              </p>
-            )}
             {precioDesde !== null && (
               <p className="text-2xl font-bold">
                 Desde {formatCOP(precioDesde)}

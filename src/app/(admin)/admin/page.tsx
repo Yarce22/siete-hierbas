@@ -77,7 +77,7 @@ export default async function AdminPage() {
           </p>
           <div className="grid gap-4 sm:grid-cols-3">
             {statsConfig.filter(s => s.section === "tienda").map((s) => (
-              <StatCard key={s.key} {...s} value={stats[s.key]} />
+              <StatCard key={s.key} label={s.label} href={s.href} icon={s.icon} value={stats[s.key]} />
             ))}
           </div>
         </section>
@@ -88,7 +88,7 @@ export default async function AdminPage() {
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {statsConfig.filter(s => s.section === "hostal").map((s) => (
-              <StatCard key={s.key} {...s} value={stats[s.key]} />
+              <StatCard key={s.key} label={s.label} href={s.href} icon={s.icon} value={stats[s.key]} />
             ))}
           </div>
         </section>

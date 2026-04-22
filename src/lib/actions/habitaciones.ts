@@ -44,7 +44,7 @@ export async function crearHabitacion(formData: FormData) {
   };
 
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -82,7 +82,7 @@ export async function actualizarHabitacion(id: string, formData: FormData) {
   };
 
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const supabase = await createClient();
   const { error } = await supabase

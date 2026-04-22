@@ -33,7 +33,8 @@ export default async function ReservasPage({
     .is("deleted_at", null)
     .order("fecha_check_in", { ascending: false });
 
-  if (estado) query = query.eq("estado", estado);
+  type EstadoReserva = "pendiente" | "confirmada" | "en_curso" | "completada" | "cancelada";
+  if (estado) query = query.eq("estado", estado as EstadoReserva);
 
   const { data: reservas } = await query;
 

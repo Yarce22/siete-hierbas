@@ -29,7 +29,8 @@ export default async function PedidosPage({
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
-  if (estado) query = query.eq("estado", estado);
+  type EstadoPedido = "pendiente_whatsapp" | "confirmado" | "en_camino" | "entregado" | "cancelado";
+  if (estado) query = query.eq("estado", estado as EstadoPedido);
 
   const { data: pedidos } = await query;
 
