@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-type Imagen = { url: string; alt: string | null };
+type Imagen = { url: string; alt_text: string | null };
 
 export function GaleriaProducto({ imagenes }: { imagenes: Imagen[] }) {
   const [principal, setPrincipal] = useState(0);
@@ -24,7 +24,7 @@ export function GaleriaProducto({ imagenes }: { imagenes: Imagen[] }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={actual.url}
-          alt={actual.alt ?? "Foto del producto"}
+          alt={actual.alt_text ?? "Foto del producto"}
           className="size-full object-cover"
         />
       </div>
@@ -46,7 +46,7 @@ export function GaleriaProducto({ imagenes }: { imagenes: Imagen[] }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img.url}
-                alt={img.alt ?? `Foto ${i + 1}`}
+                alt={img.alt_text ?? `Foto ${i + 1}`}
                 className="size-full object-cover"
               />
             </button>

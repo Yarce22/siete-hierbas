@@ -4,7 +4,7 @@ export type ProductoListItem = {
   id: string;
   nombre: string;
   slug: string;
-  descripcion_corta: string | null;
+  descripcion: string | null;
   destacado: boolean;
   categoria: { nombre: string; slug: string } | null;
   imagen_principal: string | null;
@@ -15,45 +15,42 @@ export type ProductoDetalle = {
   id: string;
   nombre: string;
   slug: string;
-  descripcion_corta: string | null;
   descripcion: string | null;
   destacado: boolean;
   categoria: { id: string; nombre: string; slug: string } | null;
-  imagenes: { url: string; alt: string | null; orden: number }[];
+  imagenes: { url: string; alt_text: string | null; orden: number }[];
   variantes: {
     id: string;
     nombre: string;
     precio: number;
     stock: number;
-    activo: boolean;
-    orden: number;
+    stock_minimo: number;
   }[];
 };
 
-type ProductoRowRaw = {
+type RawListItem = {
   id: string;
   nombre: string;
   slug: string;
-  descripcion_corta: string | null;
+  descripcion: string | null;
   destacado: boolean;
   categorias: { nombre: string; slug: string } | null;
-  producto_imagenes: { url: string }[] | null;
+  producto_imagenes: { url: string; orden: number }[] | null;
   producto_variantes: { precio: number }[] | null;
 };
 
-function mapProductoListItem(row: ProductoRowRaw): ProductoListItem {
-  const precios = (row.producto_variantes ?? [])
-    .map((v) => v.precio)
-    .filter((p): p is number => typeof p === "number");
-
+function mapListItem(row: RawListItem): ProductoListItem {
+  const precios = (row.producto_variantes ?? []).map((v) => v.precio);
   return {
     id: row.id,
     nombre: row.nombre,
     slug: row.slug,
-    descripcion_corta: row.descripcion_corta,
+    descripcion: row.descripcion,
     destacado: row.destacado,
     categoria: row.categorias,
-    imagen_principal: row.producto_imagenes?.[0]?.url ?? null,
+    imagen_principal:
+      (row.producto_imagenes ?? []).sort((a, b) => a.orden - b.orden)[0]
+        ?.url ?? null,
     precio_desde: precios.length ? Math.min(...precios) : null,
   };
 }
@@ -72,12 +69,11 @@ export async function getProductos(
   let query = supabase
     .from("productos")
     .select(
-      `id, nombre, slug, descripcion_corta, destacado,
+      `id, nombre, slug, descripcion, destacado,
        categorias:categoria_id ( nombre, slug ),
        producto_imagenes ( url, orden ),
-       producto_variantes ( precio, activo )`,
+       producto_variantes ( precio )`,
     )
-    .eq("activo", true)
     .is("deleted_at", null)
     .order("destacado", { ascending: false })
     .order("nombre", { ascending: true });
@@ -90,6 +86,7 @@ export async function getProductos(
       .from("categorias")
       .select("id")
       .eq("slug", options.categoriaSlug)
+      .is("deleted_at", null)
       .maybeSingle();
 
     if (catError) throw catError;
@@ -100,9 +97,7 @@ export async function getProductos(
   const { data, error } = await query;
   if (error) throw error;
 
-  return (data ?? []).map((row) =>
-    mapProductoListItem(row as unknown as ProductoRowRaw),
-  );
+  return (data ?? []).map((row) => mapListItem(row as unknown as RawListItem));
 }
 
 export async function getProductoBySlug(
@@ -113,13 +108,12 @@ export async function getProductoBySlug(
   const { data, error } = await supabase
     .from("productos")
     .select(
-      `id, nombre, slug, descripcion_corta, descripcion, destacado,
+      `id, nombre, slug, descripcion, destacado,
        categorias:categoria_id ( id, nombre, slug ),
-       producto_imagenes ( url, alt, orden ),
-       producto_variantes ( id, nombre, precio, stock, activo, orden )`,
+       producto_imagenes ( url, alt_text, orden ),
+       producto_variantes ( id, nombre, precio, stock, stock_minimo )`,
     )
     .eq("slug", slug)
-    .eq("activo", true)
     .is("deleted_at", null)
     .maybeSingle();
 
@@ -130,18 +124,21 @@ export async function getProductoBySlug(
     id: string;
     nombre: string;
     slug: string;
-    descripcion_corta: string | null;
     descripcion: string | null;
     destacado: boolean;
     categorias: { id: string; nombre: string; slug: string } | null;
-    producto_imagenes: { url: string; alt: string | null; orden: number }[];
+    producto_imagenes: {
+      url: string;
+      alt_text: string | null;
+      orden: number;
+    }[];
     producto_variantes: {
       id: string;
       nombre: string;
       precio: number;
       stock: number;
-      activo: boolean;
-      orden: number;
+      stock_minimo: number;
+      deleted_at: string | null;
     }[];
   };
 
@@ -149,13 +146,12 @@ export async function getProductoBySlug(
     id: d.id,
     nombre: d.nombre,
     slug: d.slug,
-    descripcion_corta: d.descripcion_corta,
     descripcion: d.descripcion,
     destacado: d.destacado,
     categoria: d.categorias,
     imagenes: (d.producto_imagenes ?? []).sort((a, b) => a.orden - b.orden),
     variantes: (d.producto_variantes ?? [])
-      .filter((v) => v.activo)
-      .sort((a, b) => a.orden - b.orden),
+      .filter((v) => !v.deleted_at)
+      .sort((a, b) => a.nombre.localeCompare(b.nombre)),
   };
 }

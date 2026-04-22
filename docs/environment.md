@@ -9,7 +9,8 @@ Copiá este bloque a un archivo **`.env.local`** en el root del proyecto y compl
 
 # Supabase (obtener desde https://app.supabase.com/project/<id>/settings/api)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# La "publishable key" es el nuevo nombre de la anon key en proyectos nuevos
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key-here
 
 # Supabase Service Role (SOLO en server — NUNCA exponer al cliente)
 # Necesario para operaciones admin que bypassean RLS (seeds, jobs internos)
@@ -29,7 +30,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 2. En el sidebar, andá a **Project Settings → API**.
 3. Copiá:
    - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon / public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **Publishable key** (o "anon / public" en proyectos viejos) → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
    - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY` (**⚠️ NUNCA commitear ni exponer al cliente**)
 
 ## Archivos ignorados por git
