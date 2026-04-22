@@ -11,6 +11,25 @@ export type ProductoListItem = {
   precio_desde: number | null;
 };
 
+export type ProductoDetalle = {
+  id: string;
+  nombre: string;
+  slug: string;
+  descripcion_corta: string | null;
+  descripcion: string | null;
+  destacado: boolean;
+  categoria: { id: string; nombre: string; slug: string } | null;
+  imagenes: { url: string; alt: string | null; orden: number }[];
+  variantes: {
+    id: string;
+    nombre: string;
+    precio: number;
+    stock: number;
+    activo: boolean;
+    orden: number;
+  }[];
+};
+
 type ProductoRowRaw = {
   id: string;
   nombre: string;
@@ -22,7 +41,7 @@ type ProductoRowRaw = {
   producto_variantes: { precio: number }[] | null;
 };
 
-function mapProducto(row: ProductoRowRaw): ProductoListItem {
+function mapProductoListItem(row: ProductoRowRaw): ProductoListItem {
   const precios = (row.producto_variantes ?? [])
     .map((v) => v.precio)
     .filter((p): p is number => typeof p === "number");
@@ -53,16 +72,10 @@ export async function getProductos(
   let query = supabase
     .from("productos")
     .select(
-      `
-        id,
-        nombre,
-        slug,
-        descripcion_corta,
-        destacado,
-        categorias:categoria_id ( nombre, slug ),
-        producto_imagenes ( url, orden ),
-        producto_variantes ( precio, activo )
-      `,
+      `id, nombre, slug, descripcion_corta, destacado,
+       categorias:categoria_id ( nombre, slug ),
+       producto_imagenes ( url, orden ),
+       producto_variantes ( precio, activo )`,
     )
     .eq("activo", true)
     .is("deleted_at", null)
@@ -87,5 +100,62 @@ export async function getProductos(
   const { data, error } = await query;
   if (error) throw error;
 
-  return (data ?? []).map((row) => mapProducto(row as unknown as ProductoRowRaw));
+  return (data ?? []).map((row) =>
+    mapProductoListItem(row as unknown as ProductoRowRaw),
+  );
+}
+
+export async function getProductoBySlug(
+  slug: string,
+): Promise<ProductoDetalle | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("productos")
+    .select(
+      `id, nombre, slug, descripcion_corta, descripcion, destacado,
+       categorias:categoria_id ( id, nombre, slug ),
+       producto_imagenes ( url, alt, orden ),
+       producto_variantes ( id, nombre, precio, stock, activo, orden )`,
+    )
+    .eq("slug", slug)
+    .eq("activo", true)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  const d = data as unknown as {
+    id: string;
+    nombre: string;
+    slug: string;
+    descripcion_corta: string | null;
+    descripcion: string | null;
+    destacado: boolean;
+    categorias: { id: string; nombre: string; slug: string } | null;
+    producto_imagenes: { url: string; alt: string | null; orden: number }[];
+    producto_variantes: {
+      id: string;
+      nombre: string;
+      precio: number;
+      stock: number;
+      activo: boolean;
+      orden: number;
+    }[];
+  };
+
+  return {
+    id: d.id,
+    nombre: d.nombre,
+    slug: d.slug,
+    descripcion_corta: d.descripcion_corta,
+    descripcion: d.descripcion,
+    destacado: d.destacado,
+    categoria: d.categorias,
+    imagenes: (d.producto_imagenes ?? []).sort((a, b) => a.orden - b.orden),
+    variantes: (d.producto_variantes ?? [])
+      .filter((v) => v.activo)
+      .sort((a, b) => a.orden - b.orden),
+  };
 }

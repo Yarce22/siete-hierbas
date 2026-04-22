@@ -9,10 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ProductoCard } from "@/components/public/producto-card";
+import { getProductos } from "@/lib/queries/productos";
 
-export default function Home() {
+export default async function Home() {
+  const destacados = await getProductos({ soloDestacados: true, limit: 4 });
+
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-16">
       <section className="flex flex-col gap-4">
         <h1 className="max-w-2xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
           Productos naturistas y hospedaje en el corazón de Risaralda.
@@ -30,6 +34,32 @@ export default function Home() {
           </Button>
         </div>
       </section>
+
+      {destacados.length > 0 && (
+        <>
+          <Separator />
+          <section className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold tracking-tight">
+                Productos destacados
+              </h2>
+              <Link
+                href="/tienda"
+                className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+              >
+                Ver todos →
+              </Link>
+            </div>
+            <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {destacados.map((p) => (
+                <li key={p.id}>
+                  <ProductoCard producto={p} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
       <Separator />
 

@@ -100,9 +100,9 @@ docs/
 - [x] Layout público `(public)` con header + footer + `CartProvider`
 - [x] Carrito con persistencia en `localStorage` (`cart-provider.tsx`)
 - [x] Página `/tienda` con grid de productos y filtro por categoría
-- [ ] Página `/tienda/[slug]` detalle de producto con variantes y galería
-- [ ] Página `/checkout` que genera deep link a WhatsApp
-- [ ] Home con productos destacados
+- [x] Página `/tienda/[slug]` detalle de producto con galería, variantes y "Agregar al carrito"
+- [x] Página `/checkout` con resumen del carrito y deep link a WhatsApp
+- [x] Home con sección de productos destacados
 
 **Pendiente de setup** (user tasks):
 - [ ] Aplicar migration al proyecto Supabase (ver `docs/database.md`)
