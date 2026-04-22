@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProductoForm } from "@/components/admin/producto-form";
 import { VariantesAdmin } from "@/components/admin/variantes-admin";
+import { ImagenesAdminProducto } from "@/components/admin/imagenes-admin-producto";
 
 export const metadata: Metadata = { title: "Editar producto · Admin" };
 
@@ -20,7 +21,8 @@ export default async function EditarProducto({
       .from("productos")
       .select(
         `id, nombre, slug, descripcion, destacado, categoria_id,
-         producto_variantes ( id, nombre, precio, stock, stock_minimo, sku )`,
+         producto_variantes ( id, nombre, precio, stock, stock_minimo, sku ),
+         producto_imagenes ( id, url, alt_text, orden )`,
       )
       .eq("id", id)
       .is("deleted_at", null)
@@ -34,20 +36,26 @@ export default async function EditarProducto({
 
   if (!producto) notFound();
 
-  const variantes = (
-    (
-      producto as typeof producto & {
-        producto_variantes: {
-          id: string;
-          nombre: string;
-          precio: number;
-          stock: number;
-          stock_minimo: number;
-          sku: string | null;
-        }[];
-      }
-    ).producto_variantes ?? []
-  );
+  type ProdConRelaciones = typeof producto & {
+    producto_variantes: {
+      id: string;
+      nombre: string;
+      precio: number;
+      stock: number;
+      stock_minimo: number;
+      sku: string | null;
+    }[];
+    producto_imagenes: {
+      id: string;
+      url: string;
+      alt_text: string | null;
+      orden: number;
+    }[];
+  };
+
+  const p = producto as ProdConRelaciones;
+  const variantes = p.producto_variantes ?? [];
+  const imagenes = (p.producto_imagenes ?? []).sort((a, b) => a.orden - b.orden);
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10 space-y-10">
@@ -56,15 +64,17 @@ export default async function EditarProducto({
         <ProductoForm
           categorias={categorias ?? []}
           producto={{
-            id: producto.id,
-            nombre: producto.nombre,
-            slug: producto.slug,
-            descripcion: producto.descripcion,
-            destacado: producto.destacado,
-            categoria_id: producto.categoria_id,
+            id: p.id,
+            nombre: p.nombre,
+            slug: p.slug,
+            descripcion: p.descripcion,
+            destacado: p.destacado,
+            categoria_id: p.categoria_id,
           }}
         />
       </div>
+
+      <ImagenesAdminProducto productoId={id} imagenes={imagenes} />
 
       <VariantesAdmin productoId={id} variantes={variantes} />
     </div>

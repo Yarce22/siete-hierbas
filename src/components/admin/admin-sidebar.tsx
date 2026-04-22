@@ -7,6 +7,8 @@ import {
   Package,
   Tags,
   ShoppingBag,
+  BedDouble,
+  CalendarCheck,
   LogOut,
 } from "lucide-react";
 
@@ -18,6 +20,8 @@ const navItems = [
   { href: "/admin/productos", label: "Productos", icon: Package },
   { href: "/admin/categorias", label: "Categorías", icon: Tags },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+  { href: "/admin/habitaciones", label: "Habitaciones", icon: BedDouble },
+  { href: "/admin/reservas", label: "Reservas", icon: CalendarCheck },
 ];
 
 export function AdminSidebar() {
@@ -35,20 +39,18 @@ export function AdminSidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 p-3">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-              isActive(item.href, item.exact)
-                ? "bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-                : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100",
-            )}
-          >
-            <item.icon className="size-4 flex-shrink-0" />
-            {item.label}
-          </Link>
+        <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          Tienda
+        </p>
+        {navItems.slice(0, 4).map((item) => (
+          <NavLink key={item.href} item={item} active={isActive(item.href, item.exact)} />
+        ))}
+
+        <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          Hostal
+        </p>
+        {navItems.slice(4).map((item) => (
+          <NavLink key={item.href} item={item} active={isActive(item.href, item.exact)} />
         ))}
       </nav>
 
@@ -64,5 +66,28 @@ export function AdminSidebar() {
         </form>
       </div>
     </aside>
+  );
+}
+
+function NavLink({
+  item,
+  active,
+}: {
+  item: { href: string; label: string; icon: React.ElementType };
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        active
+          ? "bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+          : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100",
+      )}
+    >
+      <item.icon className="size-4 flex-shrink-0" />
+      {item.label}
+    </Link>
   );
 }
