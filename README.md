@@ -88,8 +88,8 @@ docs/
 | Fase 2 — MVP Hostal público | ✅ Completa |
 | Fase 3 — Admin Dashboard base | ✅ Completa |
 | Fase 4 — Analíticas y Reportes | ✅ Completa |
-| **Fase 5 — UX Helpers** | ⏳ Próxima |
-| Fase 6 — Pulido y Launch | ❌ Pendiente |
+| **Fase 5 — UX Helpers** | ✅ Completa |
+| Fase 6 — Pulido y Launch | ⏳ Próxima |
 
 ### ✅ Fase 0 — Scaffolding
 
@@ -134,14 +134,23 @@ docs/
 - [x] Alertas de stock bajo en el dashboard home
 - [x] Export a CSV con BOM UTF-8 (compatible con Excel)
 
-### ⏳ Fase 5 — UX Helpers (próxima)
+### ✅ Fase 5 — UX Helpers
 
-- [ ] Alertas de stock bajo con badge en sidebar
-- [ ] Búsqueda global Cmd+K (cmdk)
-- [ ] Papelera de reciclaje con restauración
-- [ ] Historial de cambios por entidad (audit log visible)
-- [ ] Tour de onboarding para nuevos admins (driver.js)
-- [ ] Plantillas de productos por tipo (aceite, té, crema, tintura)
+- [x] Badge de stock bajo en sidebar (rojo con conteo de variantes bajo mínimo)
+- [x] Búsqueda global Cmd+K (cmdk) — productos, pedidos, reservas, habitaciones
+- [x] Papelera de reciclaje `/admin/papelera` con tabs por tipo, restaurar y eliminar definitivamente
+- [x] Historial de cambios (`HistorialCambios`) — componente server listo para agregar en páginas de detalle
+- [x] Tour de onboarding para nuevos admins (driver.js) — se activa una sola vez por navegador
+- [x] Plantillas de productos — modal que pre-llena descripción y variantes sugeridas
+
+### ⏳ Fase 6 — Pulido y Launch (próxima)
+
+- [ ] SEO: `generateMetadata()`, sitemap dinámico, `robots.ts`, OG image
+- [ ] i18n con next-intl — activar rutas `[locale]` para tienda y hostal (admin siempre en español)
+- [ ] Performance: `next/image` en todos los `<img>`, `Suspense` + skeletons, `loading.tsx` por ruta
+- [ ] Accesibilidad: auditoría con `axe-core`, contraste 4.5:1, `aria-label` en botones icono
+- [ ] Deploy: Vercel (frontend) + Supabase Cloud (aplicar migrations + seed)
+- [ ] Monitoreo: Sentry + Vercel Analytics + Lighthouse CI en GitHub Actions
 
 ---
 

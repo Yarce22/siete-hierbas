@@ -8,6 +8,10 @@ import { crearProducto, actualizarProducto } from "@/lib/actions/productos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  PlantillasProducto,
+  type VariantePlantilla,
+} from "@/components/admin/plantillas-producto";
 
 type Categoria = { id: string; nombre: string };
 
@@ -29,14 +33,27 @@ export function ProductoForm({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [descripcion, setDescripcion] = useState(producto?.descripcion ?? "");
+  const [variantesSugeridas, setVariantesSugeridas] = useState<
+    VariantePlantilla[]
+  >([]);
 
   function autoSlug(nombre: string) {
     return nombre
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
+  }
+
+  function aplicarPlantilla(data: {
+    descripcion: string;
+    variantes: VariantePlantilla[];
+  }) {
+    setDescripcion(data.descripcion);
+    setVariantesSugeridas(data.variantes);
+    toast.info("Plantilla aplicada. Completá los precios antes de guardar.");
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -64,6 +81,16 @@ export function ProductoForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {!producto && (
+        <div className="flex items-center justify-between rounded-lg border border-dashed bg-zinc-50 p-3 dark:bg-zinc-900">
+          <p className="text-sm text-zinc-500">
+            ¿Creás un producto típico? Usá una plantilla para arrancar más
+            rápido.
+          </p>
+          <PlantillasProducto onAplicar={aplicarPlantilla} />
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="nombre">Nombre del producto</Label>
         <Input
@@ -74,7 +101,9 @@ export function ProductoForm({
           placeholder="Aceite de lavanda 30ml"
           onChange={(e) => {
             if (!producto) {
-              const slugInput = document.getElementById("slug") as HTMLInputElement;
+              const slugInput = document.getElementById(
+                "slug",
+              ) as HTMLInputElement;
               if (slugInput) slugInput.value = autoSlug(e.target.value);
             }
           }}
@@ -115,7 +144,8 @@ export function ProductoForm({
         <textarea
           id="descripcion"
           name="descripcion"
-          defaultValue={producto?.descripcion ?? ""}
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
           rows={4}
           placeholder="Describe el producto, sus beneficios y modo de uso..."
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground"
@@ -137,6 +167,40 @@ export function ProductoForm({
           </span>
         </Label>
       </div>
+
+      {variantesSugeridas.length > 0 && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950/30">
+          <p className="mb-2 text-sm font-medium text-blue-800 dark:text-blue-300">
+            Variantes sugeridas por la plantilla
+          </p>
+          <p className="mb-3 text-xs text-blue-600 dark:text-blue-400">
+            Se agregarán al crear el producto. Completá los precios:
+          </p>
+          <div className="space-y-2">
+            {variantesSugeridas.map((v, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <span className="w-16 text-xs font-medium">{v.nombre}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-zinc-500">$</span>
+                  <Input
+                    name={`variantes[${i}][precio]`}
+                    type="number"
+                    min={0}
+                    defaultValue={0}
+                    placeholder="0"
+                    className="h-7 w-28 text-xs"
+                    required
+                  />
+                  <span className="text-xs text-zinc-400">COP</span>
+                </div>
+                <input type="hidden" name={`variantes[${i}][nombre]`} value={v.nombre} />
+                <input type="hidden" name={`variantes[${i}][stock]`} value={v.stock} />
+                <input type="hidden" name={`variantes[${i}][stock_minimo]`} value={v.stock_minimo} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-3 pt-2">
         <Button type="submit" disabled={loading}>

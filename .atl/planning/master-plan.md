@@ -17,8 +17,8 @@
 | Fase 2 — MVP Hostal público | ✅ Completa | `90384ad` |
 | Fase 3 — Admin Dashboard base | ✅ Completa | `d1b1ce2`, `e215f75` |
 | Fase 4 — Analíticas y Reportes | ✅ Completa | `8e847fc` |
-| **Fase 5 — UX Helpers** | ❌ **Pendiente** | — |
-| Fase 6 — Pulido y Launch | ❌ Pendiente | — |
+| **Fase 5 — UX Helpers** | ✅ Completa | `feat(ux-helpers)` |
+| Fase 6 — Pulido y Launch | ❌ **Pendiente** | — |
 
 ---
 
@@ -250,7 +250,7 @@ Agregar a `src/app/(admin)/admin/page.tsx`:
 
 ---
 
-### ❌ Fase 5 — UX Helpers (PRÓXIMA)
+### ✅ Fase 5 — UX Helpers (completa)
 
 **Entregable**: El admin es genuinamente usable sin capacitación técnica.
 
@@ -406,9 +406,8 @@ Supabase Cloud:
 
 ## 7. Próximos Pasos
 
-1. **Implementar Fase 5** — UX helpers (`pnpm add cmdk driver.js` antes de arrancar; prioridad: alertas stock → búsqueda global → papelera → audit log → onboarding → plantillas)
-2. **Implementar Fase 6** — pulido + deploy (coordinar con el dueño: dominio, número WA real, foto portada hostal, bucket Storage en Supabase Cloud)
-3. **Setup del cliente** — aplicar migration a Supabase Cloud, generar tipos TS, crear primer admin
+1. **Implementar Fase 6** — pulido + deploy (coordinar con el dueño: dominio, número WA real, foto portada hostal, bucket Storage en Supabase Cloud)
+2. **Setup del cliente** — aplicar migrations a Supabase Cloud (incluyendo `20260425000000_onboarding.sql`), generar tipos TS, crear primer admin
 
 ---
 
