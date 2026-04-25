@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { ProductoForm } from "@/components/admin/producto-form";
 import { VariantesAdmin } from "@/components/admin/variantes-admin";
 import { ImagenesAdminProducto } from "@/components/admin/imagenes-admin-producto";
+import { HistorialCambios } from "@/components/admin/historial-cambios";
 
 export const metadata: Metadata = { title: "Editar producto · Admin" };
 
@@ -77,6 +79,13 @@ export default async function EditarProducto({
       <ImagenesAdminProducto productoId={id} imagenes={imagenes} />
 
       <VariantesAdmin productoId={id} variantes={variantes} />
+
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">Historial de cambios</h2>
+        <Suspense fallback={<p className="text-sm text-zinc-400">Cargando historial...</p>}>
+          <HistorialCambios entidad="productos" entidadId={id} />
+        </Suspense>
+      </section>
     </div>
   );
 }

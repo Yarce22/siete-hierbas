@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { HabitacionForm } from "@/components/admin/habitacion-form";
 import { ImagenesAdminHabitacion } from "@/components/admin/imagenes-admin-habitacion";
+import { HistorialCambios } from "@/components/admin/historial-cambios";
 
 export const metadata: Metadata = { title: "Editar habitación · Admin" };
 
@@ -41,6 +43,13 @@ export default async function EditarHabitacion({
         <HabitacionForm habitacion={h} />
       </div>
       <ImagenesAdminHabitacion habitacionId={id} imagenes={imagenes} />
+
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">Historial de cambios</h2>
+        <Suspense fallback={<p className="text-sm text-zinc-400">Cargando historial...</p>}>
+          <HistorialCambios entidad="habitaciones" entidadId={id} />
+        </Suspense>
+      </section>
     </div>
   );
 }

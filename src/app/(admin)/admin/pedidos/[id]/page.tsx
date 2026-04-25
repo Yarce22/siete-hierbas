@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { HistorialCambios } from "@/components/admin/historial-cambios";
 import { formatCOP } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -150,6 +152,15 @@ export default async function PedidoDetallePage({
           </section>
         </>
       )}
+
+      <Separator />
+
+      <section>
+        <h2 className="mb-4 font-semibold">Historial de cambios</h2>
+        <Suspense fallback={<p className="text-sm text-zinc-400">Cargando historial...</p>}>
+          <HistorialCambios entidad="pedidos" entidadId={id} />
+        </Suspense>
+      </section>
     </div>
   );
 }
