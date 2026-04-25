@@ -4,7 +4,7 @@
 >
 > **Audiencia**: Alejo (dev) + futuros sub-agentes que trabajen en el proyecto.
 >
-> **Última actualización**: 2026-04-22
+> **Última actualización**: 2026-04-25
 
 ---
 
@@ -14,13 +14,11 @@
 |------|--------|--------|
 | Fase 0 — Scaffolding | ✅ Completa | `aec814b` |
 | Fase 1 — MVP Tienda pública | ✅ Completa | `fb05cf2`, `8019d6b` |
-| **Fase 2 — MVP Hostal público** | ❌ **Pendiente** | — |
+| Fase 2 — MVP Hostal público | ✅ Completa | `90384ad` |
 | Fase 3 — Admin Dashboard base | ✅ Completa | `d1b1ce2`, `e215f75` |
-| Fase 4 — Analíticas y Reportes | ❌ Pendiente | — |
-| Fase 5 — UX Helpers | ❌ Pendiente | — |
+| Fase 4 — Analíticas y Reportes | ✅ Completa | `8e847fc` |
+| **Fase 5 — UX Helpers** | ❌ **Pendiente** | — |
 | Fase 6 — Pulido y Launch | ❌ Pendiente | — |
-
-> **Nota crítica**: Fase 3 se implementó antes de Fase 2. El home ya linkea a `/hostal` → **404 activo**. Fase 2 es la próxima prioridad.
 
 ---
 
@@ -116,7 +114,7 @@ Login Supabase Auth, sidebar, CRUD productos con imágenes y variantes, CRUD cat
 
 ---
 
-### ❌ Fase 2 — MVP Hostal público (PRÓXIMA — resuelve 404 activo)
+### ✅ Fase 2 — MVP Hostal público (completa — commit `90384ad`)
 
 **Entregable**: El cliente puede ver habitaciones disponibles y contactar por WhatsApp para reservar.
 
@@ -172,7 +170,7 @@ Por favor confirmen disponibilidad.
 
 ---
 
-### ❌ Fase 4 — Analíticas y Reportes
+### ✅ Fase 4 — Analíticas y Reportes (completa — commit `8e847fc`)
 
 **Entregable**: Los dueños ven el pulso del negocio de un vistazo.
 
@@ -252,7 +250,7 @@ Agregar a `src/app/(admin)/admin/page.tsx`:
 
 ---
 
-### ❌ Fase 5 — UX Helpers
+### ❌ Fase 5 — UX Helpers (PRÓXIMA)
 
 **Entregable**: El admin es genuinamente usable sin capacitación técnica.
 
@@ -408,10 +406,9 @@ Supabase Cloud:
 
 ## 7. Próximos Pasos
 
-1. **Implementar Fase 2** — hostal público (cierra 404, es la blocker más urgente)
-2. **Implementar Fase 4** — analíticas (recharts + tanstack ya instalados, no hay nuevas deps)
-3. **Implementar Fase 5** — UX helpers (pnpm add cmdk driver.js antes de arrancar)
-4. **Implementar Fase 6** — pulido + deploy (coordinar con el dueño: dominio, número WA, foto hostal)
+1. **Implementar Fase 5** — UX helpers (`pnpm add cmdk driver.js` antes de arrancar; prioridad: alertas stock → búsqueda global → papelera → audit log → onboarding → plantillas)
+2. **Implementar Fase 6** — pulido + deploy (coordinar con el dueño: dominio, número WA real, foto portada hostal, bucket Storage en Supabase Cloud)
+3. **Setup del cliente** — aplicar migration a Supabase Cloud, generar tipos TS, crear primer admin
 
 ---
 

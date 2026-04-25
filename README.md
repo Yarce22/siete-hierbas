@@ -81,35 +81,74 @@ docs/
 
 ## Estado actual
 
-**Fase 0 — Scaffolding** ✅
+| Fase | Estado |
+|------|--------|
+| Fase 0 — Scaffolding | ✅ Completa |
+| Fase 1 — MVP E-commerce público | ✅ Completa |
+| Fase 2 — MVP Hostal público | ✅ Completa |
+| Fase 3 — Admin Dashboard base | ✅ Completa |
+| Fase 4 — Analíticas y Reportes | ✅ Completa |
+| **Fase 5 — UX Helpers** | ⏳ Próxima |
+| Fase 6 — Pulido y Launch | ❌ Pendiente |
+
+### ✅ Fase 0 — Scaffolding
 
 - [x] Next.js 16 + TypeScript + Tailwind 4 + App Router
-- [x] shadcn/ui inicializado (button, input, label, card, dialog, sonner, dropdown-menu, tooltip, skeleton, badge, separator, sheet, tabs)
+- [x] shadcn/ui inicializado
 - [x] Supabase SDK + clientes (server, browser, session helper)
-- [x] **Proxy** de auth para rutas `/admin` (Next 16 renombró `middleware` → `proxy`)
-- [x] Estructura de carpetas
-- [x] Schema base SQL (`supabase/migrations/20260421100000_schema_base.sql`)
-- [x] Seed inicial con categorías (`supabase/seed.sql`)
+- [x] Schema base SQL + seed inicial
 - [x] Documentación de DB en `docs/database.md`
 
-**Fase 1 — MVP E-commerce público** (en curso)
+### ✅ Fase 1 — MVP E-commerce público
 
-- [x] Tipos placeholder de la DB (`src/types/supabase.ts`)
-- [x] Queries base: `getCategorias`, `getProductos` (con filtro por categoría)
-- [x] Helper de formato COP (`src/lib/format.ts`)
-- [x] Layout público `(public)` con header + footer + `CartProvider`
-- [x] Carrito con persistencia en `localStorage` (`cart-provider.tsx`)
-- [x] Página `/tienda` con grid de productos y filtro por categoría
-- [x] Página `/tienda/[slug]` detalle de producto con galería, variantes y "Agregar al carrito"
-- [x] Página `/checkout` con resumen del carrito y deep link a WhatsApp
-- [x] Home con sección de productos destacados
+- [x] Catálogo público `/tienda` con filtro por categoría
+- [x] Detalle de producto `/tienda/[slug]` con galería, variantes y carrito
+- [x] Carrito con persistencia en `localStorage`
+- [x] Checkout con deep link a WhatsApp (mensaje predefinido con pedido)
+- [x] Home con productos destacados
 
-**Pendiente de setup** (user tasks):
-- [ ] Aplicar migration al proyecto Supabase (ver `docs/database.md`)
-- [ ] Generar tipos TS desde la DB → `src/types/supabase.ts` (reemplaza el placeholder)
-- [ ] Crear primer admin
-- [ ] Testing setup (Vitest + Playwright)
-- [ ] Prettier + husky + lint-staged
-- [ ] CI básico (GitHub Actions)
+### ✅ Fase 2 — MVP Hostal público
 
-**Próximas fases**: ver [master-plan.md](./.atl/planning/master-plan.md).
+- [x] Listado de habitaciones `/hostal` con filtros por tipo y capacidad
+- [x] Detalle de habitación `/hostal/[slug]` con galería y amenidades
+- [x] Verificación de disponibilidad por fechas
+- [x] Formulario de reserva → deep link a WhatsApp
+
+### ✅ Fase 3 — Admin Dashboard base
+
+- [x] Login con Supabase Auth + guard de rutas `/admin`
+- [x] Sidebar + layout del dashboard
+- [x] CRUD de productos con imágenes y variantes de precio/stock
+- [x] CRUD de categorías con íconos
+- [x] CRUD de habitaciones con galería de imágenes
+- [x] Gestión de pedidos (lista, detalle, cambio de estado)
+- [x] Gestión de reservas (lista, detalle, cambio de estado)
+
+### ✅ Fase 4 — Analíticas y Reportes
+
+- [x] Dashboard `/admin/analiticas` con selector de período (semana / mes / año)
+- [x] Gráfico de ingresos (tienda + hostal) — Recharts AreaChart
+- [x] Top productos más vendidos — Recharts BarChart horizontal
+- [x] Tabla de ventas paginada — TanStack Table
+- [x] Métricas de hostal: ocupación, ingresos, próximas reservas
+- [x] Alertas de stock bajo en el dashboard home
+- [x] Export a CSV con BOM UTF-8 (compatible con Excel)
+
+### ⏳ Fase 5 — UX Helpers (próxima)
+
+- [ ] Alertas de stock bajo con badge en sidebar
+- [ ] Búsqueda global Cmd+K (cmdk)
+- [ ] Papelera de reciclaje con restauración
+- [ ] Historial de cambios por entidad (audit log visible)
+- [ ] Tour de onboarding para nuevos admins (driver.js)
+- [ ] Plantillas de productos por tipo (aceite, té, crema, tintura)
+
+---
+
+**Setup pendiente** (tareas del usuario):
+- [ ] Aplicar migration al proyecto Supabase Cloud (ver `docs/database.md`)
+- [ ] Generar tipos TS desde la DB → `pnpm supabase gen types`
+- [ ] Configurar variables de entorno en producción (ver `docs/environment.md`)
+- [ ] Deploy en Vercel + conectar dominio del cliente
+
+**Hoja de ruta completa**: [.atl/planning/master-plan.md](./.atl/planning/master-plan.md).
