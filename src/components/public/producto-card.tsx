@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import type { ProductoListItem } from "@/lib/queries/productos";
 import { formatCOP } from "@/lib/format";
@@ -8,13 +9,14 @@ export function ProductoCard({ producto }: { producto: ProductoListItem }) {
   return (
     <Link href={`/tienda/${producto.slug}`} className="group">
       <Card className="h-full overflow-hidden transition-shadow group-hover:shadow-md">
-        <div className="aspect-square w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+        <div className="relative aspect-square w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
           {producto.imagen_principal ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={producto.imagen_principal}
               alt={producto.nombre}
-              className="size-full object-cover transition-transform group-hover:scale-105"
+              fill
+              className="object-cover transition-transform group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
             <div className="flex size-full items-center justify-center text-xs text-zinc-400">

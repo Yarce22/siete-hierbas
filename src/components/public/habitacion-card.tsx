@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Users } from "lucide-react";
 
 import type { HabitacionListItem } from "@/lib/queries/habitaciones";
@@ -10,13 +11,14 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
   return (
     <Link href={`/hostal/${habitacion.slug}`} className="group">
       <Card className="h-full overflow-hidden transition-shadow group-hover:shadow-md">
-        <div className="aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+        <div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
           {habitacion.imagen_principal ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={habitacion.imagen_principal}
               alt={habitacion.nombre}
-              className="size-full object-cover transition-transform group-hover:scale-105"
+              fill
+              className="object-cover transition-transform group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
             <div className="flex size-full items-center justify-center text-xs text-zinc-400">

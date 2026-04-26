@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type Imagen = { url: string; alt_text: string | null };
@@ -20,12 +21,14 @@ export function GaleriaProducto({ imagenes }: { imagenes: Imagen[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="aspect-square w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
+        <Image
           src={actual.url}
           alt={actual.alt_text ?? "Foto del producto"}
-          className="size-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority
         />
       </div>
 
@@ -36,18 +39,20 @@ export function GaleriaProducto({ imagenes }: { imagenes: Imagen[] }) {
               key={img.url}
               type="button"
               onClick={() => setPrincipal(i)}
+              aria-label={img.alt_text ?? `Ver foto ${i + 1}`}
               className={cn(
-                "size-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-colors",
+                "relative size-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-colors",
                 i === principal
                   ? "border-zinc-900 dark:border-zinc-100"
                   : "border-transparent opacity-60 hover:opacity-100",
               )}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={img.url}
                 alt={img.alt_text ?? `Foto ${i + 1}`}
-                className="size-full object-cover"
+                fill
+                className="object-cover"
+                sizes="64px"
               />
             </button>
           ))}

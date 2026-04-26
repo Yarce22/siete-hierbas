@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Minus, Plus, Trash2, MessageCircle } from "lucide-react";
 
 import { useCart } from "@/components/public/cart-provider";
@@ -49,13 +50,14 @@ export function CheckoutClient() {
             key={line.varianteId}
             className="flex items-start gap-4 rounded-xl border p-4"
           >
-            <div className="size-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900">
+            <div className="relative size-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900">
               {line.imagen ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={line.imagen}
                   alt={line.productoNombre}
-                  className="size-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="64px"
                 />
               ) : (
                 <div className="size-full" />
