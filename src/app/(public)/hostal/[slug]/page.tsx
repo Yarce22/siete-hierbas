@@ -21,9 +21,16 @@ export async function generateMetadata({
   const habitacion = await getHabitacionBySlug(slug);
   if (!habitacion) return {};
 
+  const imagenOg = habitacion.imagenes[0]?.url;
+
   return {
     title: habitacion.nombre,
     description: habitacion.descripcion ?? undefined,
+    openGraph: {
+      title: habitacion.nombre,
+      description: habitacion.descripcion ?? undefined,
+      images: imagenOg ? [{ url: imagenOg, alt: habitacion.nombre }] : [],
+    },
   };
 }
 

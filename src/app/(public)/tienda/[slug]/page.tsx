@@ -20,9 +20,16 @@ export async function generateMetadata({
   const producto = await getProductoBySlug(slug);
   if (!producto) return {};
 
+  const imagenOg = producto.imagenes[0]?.url;
+
   return {
     title: producto.nombre,
     description: producto.descripcion ?? undefined,
+    openGraph: {
+      title: producto.nombre,
+      description: producto.descripcion ?? undefined,
+      images: imagenOg ? [{ url: imagenOg, alt: producto.nombre }] : [],
+    },
   };
 }
 
