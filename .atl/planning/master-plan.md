@@ -18,7 +18,7 @@
 | Fase 3 — Admin Dashboard base | ✅ Completa | `d1b1ce2`, `e215f75` |
 | Fase 4 — Analíticas y Reportes | ✅ Completa | `8e847fc` |
 | **Fase 5 — UX Helpers** | ✅ Completa | `feat(ux-helpers)` |
-| Fase 6 — Pulido y Launch | ❌ **Pendiente** | — |
+| Fase 6 — Pulido y Launch | ✅ Completa (código) | `38c8bb5` |
 
 ---
 
@@ -321,7 +321,7 @@ src/components/admin/plantillas-producto.tsx  — modal con opciones
 
 ---
 
-### ❌ Fase 6 — Pulido y Launch
+### ✅ Fase 6 — Pulido y Launch (código completo — commit `38c8bb5`)
 
 **Entregable**: Plataforma en producción, performante y accesible.
 
@@ -406,8 +406,10 @@ Supabase Cloud:
 
 ## 7. Próximos Pasos
 
-1. **Implementar Fase 6** — pulido + deploy (coordinar con el dueño: dominio, número WA real, foto portada hostal, bucket Storage en Supabase Cloud)
-2. **Setup del cliente** — aplicar migrations a Supabase Cloud (incluyendo `20260425000000_onboarding.sql`), generar tipos TS, crear primer admin
+1. **Setup del cliente** — aplicar migrations a Supabase Cloud, generar tipos TS (`pnpm supabase gen types`), crear primer admin
+2. **Deploy** — Vercel (repo + env vars) + dominio del cliente + `NEXT_PUBLIC_SITE_URL`
+3. **Storage** — crear buckets `productos` y `habitaciones` con policy public read
+4. **Coordinar con el dueño** — número WA real, foto portada hostal, primeros productos de catálogo
 
 ---
 
