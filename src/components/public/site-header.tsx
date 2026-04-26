@@ -15,7 +15,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden gap-6 text-sm text-zinc-600 dark:text-zinc-400 md:flex">
+        <nav aria-label="Navegación principal" className="hidden gap-6 text-sm text-zinc-600 dark:text-zinc-400 md:flex">
           <Link
             href="/tienda"
             className="hover:text-zinc-900 dark:hover:text-zinc-100"

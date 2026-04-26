@@ -46,7 +46,7 @@ export default async function HabitacionPage({
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
-      <nav className="mb-8 flex items-center gap-2 text-sm text-zinc-500">
+      <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-sm text-zinc-500">
         <Link href="/hostal" className="hover:text-zinc-900 dark:hover:text-zinc-100">
           Hostal
         </Link>
