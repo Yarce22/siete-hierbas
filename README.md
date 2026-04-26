@@ -88,8 +88,8 @@ docs/
 | Fase 2 — MVP Hostal público | ✅ Completa |
 | Fase 3 — Admin Dashboard base | ✅ Completa |
 | Fase 4 — Analíticas y Reportes | ✅ Completa |
-| **Fase 5 — UX Helpers** | ✅ Completa |
-| Fase 6 — Pulido y Launch | ⏳ Próxima |
+| Fase 5 — UX Helpers | ✅ Completa |
+| **Fase 6 — Pulido y Launch** | ✅ Completa (código) |
 
 ### ✅ Fase 0 — Scaffolding
 
@@ -143,21 +143,30 @@ docs/
 - [x] Tour de onboarding para nuevos admins (driver.js) — se activa una sola vez por navegador
 - [x] Plantillas de productos — modal que pre-llena descripción y variantes sugeridas
 
-### ⏳ Fase 6 — Pulido y Launch (próxima)
+### ✅ Fase 6 — Pulido y Launch
 
-- [ ] SEO: `generateMetadata()`, sitemap dinámico, `robots.ts`, OG image
-- [ ] i18n con next-intl — activar rutas `[locale]` para tienda y hostal (admin siempre en español)
-- [ ] Performance: `next/image` en todos los `<img>`, `Suspense` + skeletons, `loading.tsx` por ruta
-- [ ] Accesibilidad: auditoría con `axe-core`, contraste 4.5:1, `aria-label` en botones icono
-- [ ] Deploy: Vercel (frontend) + Supabase Cloud (aplicar migrations + seed)
-- [ ] Monitoreo: Sentry + Vercel Analytics + Lighthouse CI en GitHub Actions
+- [x] SEO: `generateMetadata()` con OpenGraph en detalle de productos y habitaciones
+- [x] SEO: `sitemap.ts` dinámico — home, tienda, hostal y todas las páginas de detalle
+- [x] SEO: `robots.ts` — permite públicas, bloquea `/admin` y `/api`
+- [x] SEO: `lang="es"` en root layout + `metadataBase` + openGraph global
+- [x] Performance: `next/image` en todos los `<img>` de componentes públicos (cards, galería, checkout)
+- [x] Performance: `remotePatterns` en `next.config.ts` para imágenes de Supabase Storage
+- [x] Performance: `loading.tsx` con skeletons en tienda, hostal y páginas de detalle
+- [x] Accesibilidad: `aria-label` en navegación principal, breadcrumbs y botones de galería
 
 ---
 
-**Setup pendiente** (tareas del usuario):
-- [ ] Aplicar migration al proyecto Supabase Cloud (ver `docs/database.md`)
-- [ ] Generar tipos TS desde la DB → `pnpm supabase gen types`
-- [ ] Configurar variables de entorno en producción (ver `docs/environment.md`)
-- [ ] Deploy en Vercel + conectar dominio del cliente
+**Pendiente para launch** (requiere acceso del cliente):
+
+| Tarea | Detalle |
+|-------|---------|
+| Variable de entorno | `NEXT_PUBLIC_SITE_URL=https://tu-dominio.com` en Vercel |
+| Supabase Cloud | Crear proyecto → `supabase db push` → `supabase seed` |
+| Tipos TypeScript | `pnpm supabase gen types > src/types/supabase.ts` |
+| Storage buckets | Crear `productos` y `habitaciones` (policy: public read) |
+| Deploy en Vercel | Conectar repo GitHub + configurar env vars |
+| Dominio del cliente | Configurar DNS en Vercel |
+| i18n (opcional) | next-intl está instalado — activar si se necesita inglés para turistas |
+| Monitoreo (opcional) | Sentry + Lighthouse CI en GitHub Actions |
 
 **Hoja de ruta completa**: [.atl/planning/master-plan.md](./.atl/planning/master-plan.md).
