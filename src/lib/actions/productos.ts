@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 
 const productoSchema = z.object({
   nombre: z.string().min(1, "El nombre es requerido"),
@@ -24,11 +24,13 @@ const varianteSchema = z.object({
   sku: z.string().optional().or(z.literal("")),
 });
 
+export { productoSchema, varianteSchema };
+
 function slugify(text: string) {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
@@ -46,7 +48,8 @@ export async function crearProducto(formData: FormData) {
   if (!parsedProducto.success)
     return { error: parsedProducto.error.issues[0].message };
 
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
 
   const dataProducto = {
     ...parsedProducto.data,
@@ -65,7 +68,6 @@ export async function crearProducto(formData: FormData) {
     return { error: "Error al guardar. Intentá de nuevo." };
   }
 
-  // Insertar variantes (puede haber 0 o más)
   const variantesRaw = parseVariantesFromForm(formData);
   if (variantesRaw.length > 0) {
     const variantesData = variantesRaw.map((v) => ({
@@ -99,7 +101,8 @@ export async function actualizarProducto(id: string, formData: FormData) {
   if (!parsedProducto.success)
     return { error: parsedProducto.error.issues[0].message };
 
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
 
   const dataProducto = {
     ...parsedProducto.data,
@@ -125,7 +128,9 @@ export async function actualizarProducto(id: string, formData: FormData) {
 }
 
 export async function eliminarProducto(id: string) {
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const { error } = await supabase
     .from("productos")
     .update({ deleted_at: new Date().toISOString() })
@@ -150,7 +155,9 @@ export async function crearVariante(productoId: string, formData: FormData) {
   const parsed = varianteSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const { error } = await supabase.from("producto_variantes").insert({
     ...parsed.data,
     producto_id: productoId,
@@ -164,7 +171,9 @@ export async function crearVariante(productoId: string, formData: FormData) {
 }
 
 export async function eliminarVariante(varianteId: string, productoId: string) {
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const { error } = await supabase
     .from("producto_variantes")
     .update({ deleted_at: new Date().toISOString() })

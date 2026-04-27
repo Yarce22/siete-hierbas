@@ -2,20 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 import { subirImagen, eliminarImagen } from "@/lib/actions/storage";
 
-export async function agregarImagenProducto(
-  productoId: string,
-  formData: FormData,
-) {
+export async function agregarImagenProducto(productoId: string, formData: FormData) {
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const file = formData.get("imagen") as File | null;
   if (!file || file.size === 0) return { error: "No se seleccionó ninguna imagen." };
 
   const result = await subirImagen("productos", productoId, file);
   if ("error" in result) return result;
 
-  const supabase = await createClient();
   const { data: lastImg } = await supabase
     .from("producto_imagenes")
     .select("orden")
@@ -29,7 +28,7 @@ export async function agregarImagenProducto(
   const { error } = await supabase.from("producto_imagenes").insert({
     producto_id: productoId,
     url: result.url,
-    alt_text: formData.get("alt_text") as string || null,
+    alt_text: (formData.get("alt_text") as string) || null,
     orden,
   });
 
@@ -45,9 +44,11 @@ export async function eliminarImagenProducto(
   url: string,
   productoId: string,
 ) {
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   await eliminarImagen("productos", url);
 
-  const supabase = await createClient();
   const { error } = await supabase
     .from("producto_imagenes")
     .delete()
@@ -64,13 +65,15 @@ export async function agregarImagenHabitacion(
   habitacionId: string,
   formData: FormData,
 ) {
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const file = formData.get("imagen") as File | null;
   if (!file || file.size === 0) return { error: "No se seleccionó ninguna imagen." };
 
   const result = await subirImagen("habitaciones", habitacionId, file);
   if ("error" in result) return result;
 
-  const supabase = await createClient();
   const { data: lastImg } = await supabase
     .from("habitacion_imagenes")
     .select("orden")
@@ -84,7 +87,7 @@ export async function agregarImagenHabitacion(
   const { error } = await supabase.from("habitacion_imagenes").insert({
     habitacion_id: habitacionId,
     url: result.url,
-    alt_text: formData.get("alt_text") as string || null,
+    alt_text: (formData.get("alt_text") as string) || null,
     orden,
   });
 
@@ -99,9 +102,11 @@ export async function eliminarImagenHabitacion(
   url: string,
   habitacionId: string,
 ) {
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   await eliminarImagen("habitaciones", url);
 
-  const supabase = await createClient();
   const { error } = await supabase
     .from("habitacion_imagenes")
     .delete()

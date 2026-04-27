@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 
 const schema = z.object({
   nombre: z.string().min(1, "El nombre es requerido"),
@@ -15,11 +15,13 @@ const schema = z.object({
   orden: z.coerce.number().int().default(0),
 });
 
+export { schema as categoriaSchema };
+
 function slugify(text: string) {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
@@ -35,7 +37,9 @@ export async function crearCategoria(formData: FormData) {
   const parsed = schema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const { error } = await supabase.from("categorias").insert(parsed.data);
 
   if (error) {
@@ -59,7 +63,9 @@ export async function actualizarCategoria(id: string, formData: FormData) {
   const parsed = schema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const { error } = await supabase
     .from("categorias")
     .update(parsed.data)
@@ -77,7 +83,9 @@ export async function actualizarCategoria(id: string, formData: FormData) {
 }
 
 export async function eliminarCategoria(id: string) {
-  const supabase = await createClient();
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
   const { error } = await supabase
     .from("categorias")
     .update({ deleted_at: new Date().toISOString() })
