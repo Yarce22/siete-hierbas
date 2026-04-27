@@ -1,6 +1,8 @@
 import { CartProvider } from "@/components/public/cart-provider";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
+import { GrainOverlay } from "@/components/public/grain-overlay";
+import { SiteCursor } from "@/components/public/site-cursor";
 
 export default function PublicLayout({
   children,
@@ -9,7 +11,12 @@ export default function PublicLayout({
 }) {
   return (
     <CartProvider>
-      <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
+      <div
+        className="sh-public flex min-h-screen flex-col"
+        style={{ background: "var(--sh-dark)", color: "var(--sh-cream)" }}
+      >
+        <GrainOverlay />
+        <SiteCursor />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
