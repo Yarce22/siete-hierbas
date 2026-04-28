@@ -96,6 +96,7 @@ export function SiteHeader() {
         >
           Siete Hierbas
           <span
+            className="hidden sm:block"
             style={{
               fontSize: "0.55rem",
               fontFamily: "var(--sh-sans)",
@@ -112,7 +113,7 @@ export function SiteHeader() {
         {/* Desktop nav */}
         <nav
           aria-label="Navegación principal"
-          style={{ display: "flex", gap: "2.5rem", listStyle: "none" }}
+          style={{ gap: "2.5rem", listStyle: "none" }}
           className="hidden md:flex"
         >
           {LINKS.map((l) => (
@@ -204,7 +205,6 @@ export function SiteHeader() {
               color: "var(--sh-cream)",
               flexDirection: "column",
               gap: 5,
-              display: "flex",
             }}
           >
             <span style={{ display: "block", width: 24, height: 1, background: "currentColor" }} />

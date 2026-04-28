@@ -68,6 +68,7 @@ export function TestimonialMarquee() {
         {items.map((t, i) => (
           <div
             key={i}
+            className="sh-testimonial-card"
             style={{
               minWidth: 320,
               background: "rgba(255,255,255,0.03)",

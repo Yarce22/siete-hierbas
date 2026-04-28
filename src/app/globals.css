@@ -306,3 +306,96 @@
 .sh-public ::-webkit-scrollbar-track { background: var(--sh-dark); }
 .sh-public ::-webkit-scrollbar-thumb { background: var(--sh-dark-4); border-radius: 2px; }
 .sh-public ::-webkit-scrollbar-thumb:hover { background: var(--sh-ochre); }
+
+/* ─────────────────────────────────────────────────────────
+   SIETE HIERBAS — RESPONSIVE
+   Mobile  : ≤ 640px  |  Tablet : 641–1024px  |  Desktop : > 1024px
+   ───────────────────────────────────────────────────────── */
+
+/* ── REVEAL: usa translateY en tablet/mobile (evita overflow horizontal) ── */
+@media (max-width: 1024px) {
+  .sh-reveal-left  { transform: translateY(40px) !important; }
+  .sh-reveal-right { transform: translateY(40px) !important; }
+  .sh-reveal-left.sh-visible  { transform: translateY(0) !important; opacity: 1 !important; }
+  .sh-reveal-right.sh-visible { transform: translateY(0) !important; opacity: 1 !important; }
+}
+
+/* ── TWO-COLUMN GRID ──────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sh-two-col { grid-template-columns: 1fr !important; gap: 3rem !important; }
+}
+@media (max-width: 600px) {
+  .sh-two-col { gap: 2rem !important; }
+}
+
+/* ── STATS GRID ───────────────────────────────────────────── */
+.sh-layout-stats {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .sh-layout-stats { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .sh-stat-item { padding: 2rem 0; border-bottom: 1px solid rgba(228,215,184,0.07); }
+  .sh-stat-item:last-child { border-bottom: none; }
+}
+
+/* ── STATS SECTION PADDING ────────────────────────────────── */
+@media (max-width: 900px) {
+  .sh-stats-section { padding: 4rem 2rem !important; }
+}
+@media (max-width: 640px) {
+  .sh-stats-section { padding: 3rem 1.5rem !important; }
+}
+
+/* ── HERO: ocultar SVGs y scroll hint en mobile ───────────── */
+@media (max-width: 640px) {
+  .sh-hero-deco-svg   { display: none !important; }
+  .sh-hero-scroll-hint { display: none !important; }
+}
+
+/* ── HISTORY BADGE: ocultar en tablet/mobile ─────────────── */
+.sh-history-badge {
+  position: absolute;
+  bottom: -2rem;
+  left: -2rem;
+  width: 160px;
+  height: 160px;
+  z-index: 2;
+}
+@media (max-width: 900px) {
+  .sh-history-badge { display: none !important; }
+}
+
+/* ── HOSTAL PRICE BADGE ───────────────────────────────────── */
+.sh-hostal-img-wrapper { position: relative; }
+@media (max-width: 1080px) {
+  .sh-hostal-img-wrapper { display: flex; flex-direction: column; }
+  .sh-hostal-price-badge {
+    position: static !important;
+    right: auto !important;
+    top: auto !important;
+    margin-top: 1rem;
+    display: inline-block;
+  }
+}
+
+/* ── TESTIMONIAL CARDS: ancho en mobile ───────────────────── */
+@media (max-width: 640px) {
+  .sh-testimonial-card { min-width: 260px !important; padding: 1.5rem !important; }
+}
+
+/* ── INPUTS: font-size mínimo 16px (evita zoom en iOS) ───── */
+@media (max-width: 768px) {
+  .sh-public input,
+  .sh-public textarea,
+  .sh-public select { font-size: 1rem !important; }
+}
+
+/* ── TOUCH: desactivar hover transforms en botones ────────── */
+@media (hover: none) {
+  .sh-public a, .sh-public button { -webkit-tap-highlight-color: transparent; }
+}

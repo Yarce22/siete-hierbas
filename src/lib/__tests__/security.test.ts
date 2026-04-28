@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { validateImageFile } from "@/lib/actions/storage";
-import { isTablaPermitida } from "@/lib/actions/papelera";
+import { validateImageFile } from "@/lib/utils/storage";
+import { isTablaPermitida } from "@/lib/utils/papelera";
 import { categoriaSchema } from "@/lib/actions/categorias";
 import { productoSchema, varianteSchema } from "@/lib/actions/productos";
 import { habitacionSchema } from "@/lib/actions/habitaciones";

@@ -3,20 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/supabase/require-admin";
-
-type TablaEliminable = "productos" | "categorias" | "habitaciones" | "pedidos";
-
-const TABLAS_PERMITIDAS = new Set<string>([
-  "productos",
-  "categorias",
-  "habitaciones",
-  "pedidos",
-]);
-
-// Exported for unit testing — sync, not a server action
-export function isTablaPermitida(tabla: string): tabla is TablaEliminable {
-  return TABLAS_PERMITIDAS.has(tabla);
-}
+import { isTablaPermitida, type TablaEliminable } from "@/lib/utils/papelera";
 
 export async function restaurarElemento(tabla: TablaEliminable, id: string) {
   if (!isTablaPermitida(tabla)) return { error: "Operación no permitida." };

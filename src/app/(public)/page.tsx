@@ -190,7 +190,7 @@ export default async function Home() {
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          height: "100vh",
+          height: "calc(100vh - 5rem)",
           position: "relative",
           display: "flex",
           flexDirection: "column",
@@ -219,6 +219,7 @@ export default async function Home() {
         {/* Floating botanical SVGs */}
         <svg
           aria-hidden="true"
+          className="sh-hero-deco-svg"
           style={{
             position: "absolute",
             top: "8%",
@@ -243,6 +244,7 @@ export default async function Home() {
 
         <svg
           aria-hidden="true"
+          className="sh-hero-deco-svg"
           style={{
             position: "absolute",
             bottom: "10%",
@@ -333,6 +335,7 @@ export default async function Home() {
         {/* Scroll indicator */}
         <div
           aria-hidden="true"
+          className="sh-hero-scroll-hint"
           style={{
             position: "absolute",
             bottom: "3rem",
@@ -355,6 +358,7 @@ export default async function Home() {
 
       {/* ── STATS ─────────────────────────────────────────────── */}
       <section
+        className="sh-stats-section"
         style={{
           background: "var(--sh-dark-2)",
           padding: "5rem 4rem",
@@ -362,16 +366,7 @@ export default async function Home() {
           borderBottom: "1px solid rgba(228,215,184,0.06)",
         }}
       >
-        <div
-          style={{
-            maxWidth: 1100,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: "2rem",
-            textAlign: "center",
-          }}
-        >
+        <div className="sh-layout-stats">
           {[
             { end: 7, suffix: "", label: "Hierbas fundacionales" },
             { end: 12, suffix: "+", label: "Años de historia" },
@@ -379,7 +374,7 @@ export default async function Home() {
           ].map((s, i) => (
             <div
               key={i}
-              className="sh-reveal"
+              className="sh-reveal sh-stat-item"
               data-delay={String(i * 150)}
               style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
             >
@@ -467,12 +462,8 @@ export default async function Home() {
               icon={<LeafIcon size={32} color="var(--sh-cream-3)" />}
             />
             <div
+              className="sh-history-badge"
               style={{
-                position: "absolute",
-                bottom: "-2rem",
-                left: "-2rem",
-                width: 160,
-                height: 160,
                 background: "var(--sh-dark-3)",
                 border: "1px solid rgba(228,215,184,0.07)",
                 display: "flex",
@@ -603,13 +594,14 @@ export default async function Home() {
             alignItems: "center",
           }}
         >
-          <div className="sh-reveal-left" style={{ position: "relative" }}>
+          <div className="sh-reveal-left sh-hostal-img-wrapper">
             <ImgPlaceholder
               label="Habitación hostal / jardín de bienestar"
               height={550}
               icon={<MoonIcon size={32} color="var(--sh-cream-3)" />}
             />
             <div
+              className="sh-hostal-price-badge"
               style={{
                 position: "absolute",
                 top: "2rem",
@@ -850,14 +842,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <style>{`
-        @media (max-width: 900px) {
-          .sh-two-col { grid-template-columns: 1fr !important; gap: 3rem !important; }
-        }
-        @media (max-width: 600px) {
-          .sh-two-col { gap: 2rem !important; }
-        }
-      `}</style>
     </div>
   );
 }

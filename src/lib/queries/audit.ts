@@ -33,7 +33,7 @@ export async function getAuditLog(
   return (data ?? []).map((row) => ({
     id: row.id,
     usuario_nombre:
-      (row.profiles as { nombre: string } | null)?.nombre ?? "Sistema",
+      (row.profiles as unknown as { nombre: string } | null)?.nombre ?? "Sistema",
     accion: row.accion,
     cambios: row.cambios as Record<string, unknown> | null,
     created_at: row.created_at,

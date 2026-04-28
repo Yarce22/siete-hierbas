@@ -84,12 +84,14 @@ function FilaEliminada({ item, onRestaurado }: { item: ElementoEliminado; onRest
           Restaurar
         </Button>
         <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-              <Trash2 className="mr-1.5 size-3.5" />
-              Eliminar
-            </Button>
-          </AlertDialogTrigger>
+          <AlertDialogTrigger
+            render={
+              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                <Trash2 className="mr-1.5 size-3.5" />
+                Eliminar
+              </Button>
+            }
+          />
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>¿Eliminar definitivamente?</AlertDialogTitle>

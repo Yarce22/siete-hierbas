@@ -18,7 +18,7 @@ export default function PublicLayout({
         <GrainOverlay />
         <SiteCursor />
         <SiteHeader />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1" style={{ paddingTop: "5rem" }}>{children}</main>
         <SiteFooter />
       </div>
     </CartProvider>

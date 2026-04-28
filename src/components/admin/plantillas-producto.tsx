@@ -77,12 +77,14 @@ export function PlantillasProducto({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button type="button" variant="outline" size="sm">
-          <Wand2 className="mr-2 size-4" />
-          Usar plantilla
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button type="button" variant="outline" size="sm">
+            <Wand2 className="mr-2 size-4" />
+            Usar plantilla
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Elegí una plantilla</DialogTitle>
