@@ -119,6 +119,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           descripcion: string | null
+          destacada: boolean
           id: string
           nombre: string
           precio_noche: number
@@ -132,6 +133,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           descripcion?: string | null
+          destacada?: boolean
           id?: string
           nombre: string
           precio_noche: number
@@ -145,6 +147,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           descripcion?: string | null
+          destacada?: boolean
           id?: string
           nombre?: string
           precio_noche?: number
