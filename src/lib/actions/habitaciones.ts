@@ -31,6 +31,7 @@ export async function crearHabitacion(formData: FormData) {
     precio_noche: formData.get("precio_noche"),
     descripcion: formData.get("descripcion") || undefined,
     amenidades: formData.get("amenidades") || undefined,
+    destacada: formData.get("destacada") === "on",
   };
 
   const parsed = schema.safeParse(raw);
@@ -49,6 +50,7 @@ export async function crearHabitacion(formData: FormData) {
       precio_noche: parsed.data.precio_noche,
       descripcion: parsed.data.descripcion ?? null,
       amenidades: parseAmenidades(parsed.data.amenidades),
+      destacada: parsed.data.destacada,
     })
     .select("id")
     .single();
@@ -71,6 +73,7 @@ export async function actualizarHabitacion(id: string, formData: FormData) {
     precio_noche: formData.get("precio_noche"),
     descripcion: formData.get("descripcion") || undefined,
     amenidades: formData.get("amenidades") || undefined,
+    destacada: formData.get("destacada") === "on",
   };
 
   const parsed = schema.safeParse(raw);
@@ -89,6 +92,7 @@ export async function actualizarHabitacion(id: string, formData: FormData) {
       precio_noche: parsed.data.precio_noche,
       descripcion: parsed.data.descripcion ?? null,
       amenidades: parseAmenidades(parsed.data.amenidades),
+      destacada: parsed.data.destacada,
     })
     .eq("id", id)
     .is("deleted_at", null);
@@ -114,5 +118,26 @@ export async function eliminarHabitacion(id: string) {
   if (error) return { error: "No se pudo eliminar." };
 
   revalidatePath("/admin/habitaciones");
+  return { success: true };
+}
+
+export async function marcarHabitacionDestacada(id: string) {
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
+  const { error: clearError } = await supabase
+    .from("habitaciones")
+    .update({ destacada: false })
+    .is("deleted_at", null);
+  if (clearError) return { error: "Error al actualizar." };
+
+  const { error } = await supabase
+    .from("habitaciones")
+    .update({ destacada: true })
+    .eq("id", id);
+  if (error) return { error: "Error al actualizar." };
+
+  revalidatePath("/admin/habitaciones");
+  revalidatePath("/");
   return { success: true };
 }

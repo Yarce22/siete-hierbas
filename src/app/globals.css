@@ -399,3 +399,7 @@
 @media (hover: none) {
   .sh-public a, .sh-public button { -webkit-tap-highlight-color: transparent; }
 }
+
+/* ── PRODUCT & ROOM CARDS ─────────────────────────────────── */
+.sh-product-card:hover .sh-card-img { transform: scale(1.07); }
+.sh-product-card:hover .sh-card-overlay { opacity: 1; }

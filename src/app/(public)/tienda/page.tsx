@@ -29,34 +29,64 @@ export default async function TiendaPage({
   const categoriaActiva = categorias.find((c) => c.slug === categoriaSlug);
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          {categoriaActiva ? categoriaActiva.nombre : "Tienda"}
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(4rem,8vw,6rem) clamp(1.5rem,5vw,4rem)" }}>
+      <header style={{ marginBottom: "3rem" }}>
+        <div style={{
+          fontSize: "0.62rem",
+          letterSpacing: "0.3em",
+          textTransform: "uppercase",
+          color: "var(--sh-gold)",
+          marginBottom: "0.8rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+        }}>
+          <span style={{ display: "block", width: "2rem", height: 1, background: "var(--sh-gold)" }} />
+          Tienda
+        </div>
+        <h1 style={{
+          fontFamily: "var(--sh-serif)",
+          fontSize: "clamp(2rem,4vw,3rem)",
+          fontWeight: 300,
+          color: "var(--sh-cream)",
+          marginBottom: "0.5rem",
+        }}>
+          {categoriaActiva ? categoriaActiva.nombre : "Todos los productos"}
         </h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <p style={{ color: "var(--sh-cream-3)", fontSize: "0.9rem" }}>
           Productos naturales elaborados con hierbas de la región.
         </p>
       </header>
 
       <CategoriaFiltro categorias={categorias} activaSlug={categoriaSlug} />
 
-      {productos.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center text-zinc-500">
-          <p className="font-medium">Todavía no hay productos por acá.</p>
-          <p className="mt-1 text-sm">
-            Pronto vas a encontrar algo bueno. ¡Volvé en unos días!
-          </p>
-        </div>
-      ) : (
-        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {productos.map((p) => (
-            <li key={p.id}>
-              <ProductoCard producto={p} />
-            </li>
-          ))}
-        </ul>
-      )}
+      <div style={{ marginTop: "3rem" }}>
+        {productos.length === 0 ? (
+          <div style={{
+            border: "1px dashed rgba(228,215,184,0.15)",
+            padding: "4rem 2rem",
+            textAlign: "center",
+            color: "var(--sh-cream-3)",
+          }}>
+            <p style={{ fontFamily: "var(--sh-serif)", fontSize: "1.1rem", color: "var(--sh-cream-2)" }}>
+              Todavía no hay productos por acá.
+            </p>
+            <p style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>
+              Pronto vas a encontrar algo bueno. ¡Volvé en unos días!
+            </p>
+          </div>
+        ) : (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gap: "2rem",
+          }}>
+            {productos.map((p) => (
+              <ProductoCard key={p.id} producto={p} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

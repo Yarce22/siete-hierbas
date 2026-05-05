@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import type { CategoriaListItem } from "@/lib/queries/categorias";
 import { cn } from "@/lib/utils";
 
@@ -9,18 +8,13 @@ type Props = {
 };
 
 export function CategoriaFiltro({ categorias, activaSlug }: Props) {
-  const base =
-    "rounded-full border px-3 py-1 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800";
-  const activa =
-    "border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200";
-  const inactiva = "border-zinc-200 dark:border-zinc-800";
+  const base = "px-3 py-1 text-sm transition-colors";
+  const activa = "border border-[var(--sh-gold)] text-[var(--sh-gold)]";
+  const inactiva = "border border-[rgba(228,215,184,0.2)] text-[var(--sh-cream-2)] hover:border-[rgba(228,215,184,0.5)] hover:text-[var(--sh-cream)]";
 
   return (
     <nav className="flex flex-wrap gap-2" aria-label="Filtrar por categoría">
-      <Link
-        href="/tienda"
-        className={cn(base, !activaSlug ? activa : inactiva)}
-      >
+      <Link href="/tienda" className={cn(base, !activaSlug ? activa : inactiva)}>
         Todos
       </Link>
       {categorias.map((c) => (

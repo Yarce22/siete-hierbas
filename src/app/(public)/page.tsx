@@ -5,6 +5,8 @@ import { ScrollRevealInit } from "@/components/public/scroll-reveal-init";
 import { AnimatedCounter } from "@/components/public/animated-counter";
 import { TestimonialMarquee } from "@/components/public/testimonial-marquee";
 import { getProductos } from "@/lib/queries/productos";
+import { getHabitacionDestacada } from "@/lib/queries/habitaciones";
+import { formatCOP } from "@/lib/format";
 
 // ── BOTANICAL ICONS ──────────────────────────────────────────────────
 
@@ -142,6 +144,7 @@ function ImgPlaceholder({ label, height = 400, icon }: { label: string; height?:
 
 export default async function Home() {
   const destacados = await getProductos({ soloDestacados: true, limit: 4 });
+  const habitacionDestacada = await getHabitacionDestacada();
 
   return (
     <div
@@ -595,11 +598,17 @@ export default async function Home() {
           }}
         >
           <div className="sh-reveal-left sh-hostal-img-wrapper">
-            <ImgPlaceholder
-              label="Habitación hostal / jardín de bienestar"
-              height={550}
-              icon={<MoonIcon size={32} color="var(--sh-cream-3)" />}
-            />
+            {habitacionDestacada?.imagen_principal ? (
+              <div style={{ height: 550, position: "relative", background: "var(--sh-dark-3)" }}>
+                <Image src={habitacionDestacada.imagen_principal} alt={habitacionDestacada.nombre} fill className="object-cover" />
+              </div>
+            ) : (
+              <ImgPlaceholder
+                label="Habitación hostal / jardín de bienestar"
+                height={550}
+                icon={<MoonIcon size={32} color="var(--sh-cream-3)" />}
+              />
+            )}
             <div
               className="sh-hostal-price-badge"
               style={{
@@ -616,7 +625,7 @@ export default async function Home() {
                 Desde
               </div>
               <div style={{ fontFamily: "var(--sh-serif)", fontSize: "2.2rem", fontStyle: "italic", color: "var(--sh-gold)" }}>
-                $150.000
+                {habitacionDestacada ? formatCOP(habitacionDestacada.precio_noche) : "$150.000"}
               </div>
               <div style={{ fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sh-cream-3)" }}>
                 por noche / persona

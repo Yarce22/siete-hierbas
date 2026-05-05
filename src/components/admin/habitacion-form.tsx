@@ -18,6 +18,7 @@ type Habitacion = {
   precio_noche: number;
   descripcion: string | null;
   amenidades: string[];
+  destacada?: boolean;
 };
 
 const TIPOS = ["Individual", "Doble", "Triple", "Cuádruple", "Suite", "Familiar"];
@@ -82,7 +83,7 @@ export function HabitacionForm({ habitacion }: { habitacion?: Habitacion }) {
           name="slug"
           defaultValue={habitacion?.slug}
           required
-          pattern="[a-z0-9-]+"
+          pattern="[a-z0-9]+(-[a-z0-9]+)*"
         />
       </div>
 
@@ -152,6 +153,20 @@ export function HabitacionForm({ habitacion }: { habitacion?: Habitacion }) {
           placeholder="WiFi&#10;Baño privado&#10;Agua caliente&#10;Televisor"
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
         />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="destacada"
+          name="destacada"
+          defaultChecked={habitacion?.destacada ?? false}
+          className="size-4"
+        />
+        <Label htmlFor="destacada">
+          Destacar en home{" "}
+          <span className="text-xs text-zinc-500">(aparece en la página principal)</span>
+        </Label>
       </div>
 
       <div className="flex gap-3 pt-2">

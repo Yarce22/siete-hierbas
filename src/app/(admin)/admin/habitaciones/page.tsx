@@ -13,7 +13,7 @@ export default async function HabitacionesPage() {
   const supabase = await createClient();
   const { data: habitaciones } = await supabase
     .from("habitaciones")
-    .select("id, nombre, slug, tipo, capacidad, precio_noche")
+    .select("id, nombre, slug, tipo, capacidad, precio_noche, destacada")
     .is("deleted_at", null)
     .order("nombre");
 
@@ -42,7 +42,7 @@ export default async function HabitacionesPage() {
           {habitaciones.map((h) => (
             <HabitacionAdminRow
               key={h.id}
-              habitacion={{ ...h, precio_noche: formatCOP(h.precio_noche) }}
+              habitacion={{ ...h, precio_noche: formatCOP(h.precio_noche), destacada: h.destacada ?? false }}
             />
           ))}
         </ul>

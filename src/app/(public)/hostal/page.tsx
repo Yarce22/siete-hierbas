@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { HabitacionCard } from "@/components/public/habitacion-card";
 import { getHabitaciones } from "@/lib/queries/habitaciones";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Hostal",
@@ -16,12 +15,6 @@ type SearchParams = { tipo?: string | string[] };
 function capitalizar(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
-
-const pillBase =
-  "rounded-full border px-3 py-1 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800";
-const pillActivo =
-  "border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200";
-const pillInactivo = "border-zinc-200 dark:border-zinc-800";
 
 export default async function HostalPage({
   searchParams,
@@ -40,20 +33,47 @@ export default async function HostalPage({
     : todasLasHabitaciones;
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Hostal</h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Hospedaje tranquilo y acogedor en el corazón de Santa Rosa de Cabal, a
-          minutos de los termales.
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(4rem,8vw,6rem) clamp(1.5rem,5vw,4rem)" }}>
+      <header style={{ marginBottom: "3rem" }}>
+        <div style={{
+          fontSize: "0.62rem",
+          letterSpacing: "0.3em",
+          textTransform: "uppercase",
+          color: "var(--sh-gold)",
+          marginBottom: "0.8rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+        }}>
+          <span style={{ display: "block", width: "2rem", height: 1, background: "var(--sh-gold)" }} />
+          El Hostal
+        </div>
+        <h1 style={{
+          fontFamily: "var(--sh-serif)",
+          fontSize: "clamp(2rem,4vw,3rem)",
+          fontWeight: 300,
+          color: "var(--sh-cream)",
+          marginBottom: "0.5rem",
+        }}>
+          Habitaciones
+        </h1>
+        <p style={{ color: "var(--sh-cream-3)", fontSize: "0.9rem" }}>
+          Hospedaje tranquilo y acogedor en el corazón de Santa Rosa de Cabal, a minutos de los termales.
         </p>
       </header>
 
       {tipos.length > 1 && (
-        <nav className="flex flex-wrap gap-2" aria-label="Filtrar por tipo">
+        <nav style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "3rem" }} aria-label="Filtrar por tipo">
           <Link
             href="/hostal"
-            className={cn(pillBase, !tipoActivo ? pillActivo : pillInactivo)}
+            style={{
+              padding: "0.25rem 0.75rem",
+              fontSize: "0.85rem",
+              border: !tipoActivo ? "1px solid var(--sh-gold)" : "1px solid rgba(228,215,184,0.2)",
+              color: !tipoActivo ? "var(--sh-gold)" : "var(--sh-cream-2)",
+              textDecoration: "none",
+              transition: "all 0.2s",
+            }}
           >
             Todas
           </Link>
@@ -61,7 +81,14 @@ export default async function HostalPage({
             <Link
               key={t}
               href={`/hostal?tipo=${t}`}
-              className={cn(pillBase, tipoActivo === t ? pillActivo : pillInactivo)}
+              style={{
+                padding: "0.25rem 0.75rem",
+                fontSize: "0.85rem",
+                border: tipoActivo === t ? "1px solid var(--sh-gold)" : "1px solid rgba(228,215,184,0.2)",
+                color: tipoActivo === t ? "var(--sh-gold)" : "var(--sh-cream-2)",
+                textDecoration: "none",
+                transition: "all 0.2s",
+              }}
             >
               {capitalizar(t)}
             </Link>
@@ -70,20 +97,29 @@ export default async function HostalPage({
       )}
 
       {habitaciones.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center text-zinc-500">
-          <p className="font-medium">No hay habitaciones disponibles por acá.</p>
-          <p className="mt-1 text-sm">
+        <div style={{
+          border: "1px dashed rgba(228,215,184,0.15)",
+          padding: "4rem 2rem",
+          textAlign: "center",
+          color: "var(--sh-cream-3)",
+        }}>
+          <p style={{ fontFamily: "var(--sh-serif)", fontSize: "1.1rem", color: "var(--sh-cream-2)" }}>
+            No hay habitaciones disponibles por acá.
+          </p>
+          <p style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>
             Probá con otro filtro o volvé pronto.
           </p>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "2rem",
+        }}>
           {habitaciones.map((h) => (
-            <li key={h.id}>
-              <HabitacionCard habitacion={h} />
-            </li>
+            <HabitacionCard key={h.id} habitacion={h} />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

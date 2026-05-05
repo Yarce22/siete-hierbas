@@ -10,6 +10,7 @@ export type HabitacionListItem = {
   descripcion: string | null;
   amenidades: string[];
   imagen_principal: string | null;
+  destacada: boolean;
 };
 
 export type HabitacionDetalle = {
@@ -33,6 +34,7 @@ type RawListItem = {
   precio_noche: number;
   descripcion: string | null;
   amenidades: string[];
+  destacada: boolean;
   habitacion_imagenes: { url: string; orden: number }[] | null;
 };
 
@@ -48,6 +50,7 @@ function mapListItem(row: RawListItem): HabitacionListItem {
     descripcion: row.descripcion,
     amenidades: row.amenidades,
     imagen_principal: sorted[0]?.url ?? null,
+    destacada: row.destacada,
   };
 }
 
@@ -57,7 +60,7 @@ export async function getHabitaciones(): Promise<HabitacionListItem[]> {
   const { data, error } = await supabase
     .from("habitaciones")
     .select(
-      `id, nombre, slug, tipo, capacidad, precio_noche, descripcion, amenidades,
+      `id, nombre, slug, tipo, capacidad, precio_noche, descripcion, amenidades, destacada,
        habitacion_imagenes ( url, orden )`,
     )
     .is("deleted_at", null)
@@ -66,6 +69,20 @@ export async function getHabitaciones(): Promise<HabitacionListItem[]> {
   if (error) throw error;
 
   return (data ?? []).map((row) => mapListItem(row as unknown as RawListItem));
+}
+
+export async function getHabitacionDestacada(): Promise<HabitacionListItem | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("habitaciones")
+    .select(`id, nombre, slug, tipo, capacidad, precio_noche, descripcion, amenidades, destacada,
+             habitacion_imagenes ( url, orden )`)
+    .eq("destacada", true)
+    .is("deleted_at", null)
+    .limit(1)
+    .maybeSingle();
+  if (error || !data) return null;
+  return mapListItem(data as unknown as RawListItem);
 }
 
 export async function getHabitacionBySlug(
