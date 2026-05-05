@@ -79,7 +79,7 @@ export function CategoriaForm({ categoria }: { categoria?: Categoria }) {
           defaultValue={categoria?.slug}
           required
           placeholder="aceites-esenciales"
-          pattern="[-a-z0-9]+"
+          pattern="[a-z0-9]+(-[a-z0-9]+)*"
         />
       </div>
 
