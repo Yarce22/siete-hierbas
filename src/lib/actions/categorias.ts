@@ -1,21 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
+import { categoriaSchema as schema } from "@/lib/validators/categorias";
 import { requireAdmin } from "@/lib/supabase/require-admin";
-
-const schema = z.object({
-  nombre: z.string().min(1, "El nombre es requerido"),
-  slug: z
-    .string()
-    .min(1)
-    .regex(/^[a-z0-9-]+$/, "Solo letras minúsculas, números y guiones"),
-  icono: z.string().optional(),
-  orden: z.coerce.number().int().default(0),
-});
-
-export { schema as categoriaSchema };
 
 function slugify(text: string) {
   return text

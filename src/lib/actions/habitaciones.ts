@@ -1,21 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
+import { habitacionSchema as schema } from "@/lib/validators/habitaciones";
 import { requireAdmin } from "@/lib/supabase/require-admin";
-
-const schema = z.object({
-  nombre: z.string().min(1, "El nombre es requerido"),
-  slug: z.string().min(1).regex(/^[a-z0-9-]+$/),
-  tipo: z.string().min(1, "El tipo es requerido"),
-  capacidad: z.coerce.number().int().min(1),
-  precio_noche: z.coerce.number().int().min(0),
-  descripcion: z.string().optional(),
-  amenidades: z.string().optional(),
-});
-
-export { schema as habitacionSchema };
 
 function slugify(text: string) {
   return text

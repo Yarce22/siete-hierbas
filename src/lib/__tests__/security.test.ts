@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { validateImageFile } from "@/lib/utils/storage";
 import { isTablaPermitida } from "@/lib/utils/papelera";
-import { categoriaSchema } from "@/lib/actions/categorias";
-import { productoSchema, varianteSchema } from "@/lib/actions/productos";
-import { habitacionSchema } from "@/lib/actions/habitaciones";
+import { categoriaSchema } from "@/lib/validators/categorias";
+import { productoSchema, varianteSchema } from "@/lib/validators/productos";
+import { habitacionSchema } from "@/lib/validators/habitaciones";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
