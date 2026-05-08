@@ -13,6 +13,7 @@ import {
   Trash2,
   LogOut,
   Search,
+  Globe,
 } from "lucide-react";
 
 import { logout } from "@/lib/actions/auth";
@@ -58,7 +59,7 @@ export function AdminSidebar({ alertasStock = 0 }: { alertasStock?: number }) {
       ],
     },
     {
-      label: "Hostal",
+      label: "Hospedaje",
       items: [
         { href: "/admin/habitaciones", label: "Habitaciones", icon: BedDouble },
         {
@@ -67,6 +68,12 @@ export function AdminSidebar({ alertasStock = 0 }: { alertasStock?: number }) {
           icon: CalendarCheck,
           tourId: "reservas",
         },
+      ],
+    },
+    {
+      label: "Contenido Web",
+      items: [
+        { href: "/admin/home", label: "Página principal", icon: Globe },
       ],
     },
     {

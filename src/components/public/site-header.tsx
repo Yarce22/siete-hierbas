@@ -8,7 +8,7 @@ import { useCart } from "@/components/public/cart-provider";
 const LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/tienda", label: "Tienda" },
-  { href: "/hostal", label: "Hostal" },
+  { href: "/hostal", label: "Hospedaje" },
   { href: "/contacto", label: "Contacto" },
 ];
 
@@ -61,11 +61,7 @@ export function SiteHeader() {
   }, []);
 
   const navStyle: React.CSSProperties = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 900,
+    position: "relative",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -106,7 +102,7 @@ export function SiteHeader() {
               fontWeight: 400,
             }}
           >
-            Herboristería · Hostal · Santa Rosa de Cabal
+            Herbolaria · Hospedaje · Santa Rosa de Cabal
           </span>
         </Link>
 

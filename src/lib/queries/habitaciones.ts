@@ -10,6 +10,7 @@ export type HabitacionListItem = {
   descripcion: string | null;
   amenidades: string[];
   imagen_principal: string | null;
+  imagenes: string[];
   destacada: boolean;
 };
 
@@ -50,6 +51,7 @@ function mapListItem(row: RawListItem): HabitacionListItem {
     descripcion: row.descripcion,
     amenidades: row.amenidades,
     imagen_principal: sorted[0]?.url ?? null,
+    imagenes: sorted.map((img) => img.url),
     destacada: row.destacada,
   };
 }

@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 import { GrainOverlay } from "@/components/public/grain-overlay";
 import { SiteCursor } from "@/components/public/site-cursor";
+import { InfoBar } from "@/components/public/info-bar";
 
 export default function PublicLayout({
   children,
@@ -17,8 +18,11 @@ export default function PublicLayout({
       >
         <GrainOverlay />
         <SiteCursor />
-        <SiteHeader />
-        <main className="flex-1" style={{ paddingTop: "5rem" }}>{children}</main>
+        <div style={{ position: "sticky", top: 0, zIndex: 950 }}>
+          <InfoBar />
+          <SiteHeader />
+        </div>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
       </div>
     </CartProvider>

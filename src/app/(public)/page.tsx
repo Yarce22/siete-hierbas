@@ -4,8 +4,11 @@ import Image from "next/image";
 import { ScrollRevealInit } from "@/components/public/scroll-reveal-init";
 import { AnimatedCounter } from "@/components/public/animated-counter";
 import { TestimonialMarquee } from "@/components/public/testimonial-marquee";
+import { HeroSlider } from "@/components/public/hero-slider";
+import { HostalImageSlider } from "@/components/public/hostal-image-slider";
 import { getProductos } from "@/lib/queries/productos";
 import { getHabitacionDestacada } from "@/lib/queries/habitaciones";
+import { getSiteConfig, getHeroSlides } from "@/lib/queries/site-config";
 import { formatCOP } from "@/lib/format";
 
 // ── BOTANICAL ICONS ──────────────────────────────────────────────────
@@ -142,9 +145,22 @@ function ImgPlaceholder({ label, height = 400, icon }: { label: string; height?:
 
 // ── HOME PAGE ────────────────────────────────────────────────────────
 
+function getIconByName(name: string): React.ReactNode {
+  switch (name) {
+    case "flower": return <FlowerIcon size={28} />;
+    case "drop": return <DropIcon size={28} />;
+    case "moon": return <MoonIcon size={28} />;
+    default: return <LeafIcon size={28} />;
+  }
+}
+
 export default async function Home() {
-  const destacados = await getProductos({ soloDestacados: true, limit: 4 });
-  const habitacionDestacada = await getHabitacionDestacada();
+  const [destacados, habitacionDestacada, siteConfig, heroSlides] = await Promise.all([
+    getProductos({ soloDestacados: true, limit: 4 }),
+    getHabitacionDestacada(),
+    getSiteConfig(),
+    getHeroSlides(),
+  ]);
 
   return (
     <div
@@ -203,160 +219,166 @@ export default async function Home() {
           textAlign: "center",
         }}
       >
-        {/* Mesh gradient */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `
-              radial-gradient(ellipse 80% 60% at 30% 60%, rgba(58,90,60,0.45) 0%, transparent 60%),
-              radial-gradient(ellipse 60% 50% at 75% 25%, rgba(184,118,44,0.2) 0%, transparent 50%),
-              radial-gradient(ellipse 50% 70% at 60% 80%, rgba(22,27,14,0.9) 0%, transparent 60%),
-              #0d1008
-            `,
-            animation: "sh-mesh-pulse 8s ease-in-out infinite",
-          }}
-        />
+        {heroSlides.length > 0 ? (
+          <HeroSlider slides={heroSlides} />
+        ) : (
+          <>
+            {/* Mesh gradient */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: `
+                  radial-gradient(ellipse 80% 60% at 30% 60%, rgba(58,90,60,0.45) 0%, transparent 60%),
+                  radial-gradient(ellipse 60% 50% at 75% 25%, rgba(184,118,44,0.2) 0%, transparent 50%),
+                  radial-gradient(ellipse 50% 70% at 60% 80%, rgba(22,27,14,0.9) 0%, transparent 60%),
+                  #0d1008
+                `,
+                animation: "sh-mesh-pulse 8s ease-in-out infinite",
+              }}
+            />
 
-        {/* Floating botanical SVGs */}
-        <svg
-          aria-hidden="true"
-          className="sh-hero-deco-svg"
-          style={{
-            position: "absolute",
-            top: "8%",
-            right: "6%",
-            opacity: 0.12,
-            animation: "sh-float-leaf 7s ease-in-out infinite",
-          }}
-          width="180"
-          height="240"
-          viewBox="0 0 180 240"
-          fill="none"
-        >
-          <path d="M90 220 C90 220 30 160 30 100 C30 60 55 20 90 10 C125 20 150 60 150 100 C150 160 90 220 90 220Z" stroke="#6aaa88" strokeWidth="1" fill="rgba(106,170,136,0.06)" />
-          <path d="M90 220 L90 30" stroke="#6aaa88" strokeWidth="0.8" opacity="0.5" />
-          <path d="M90 80 C90 80 60 70 50 50" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
-          <path d="M90 80 C90 80 120 70 130 50" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
-          <path d="M90 120 C90 120 58 108 45 85" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
-          <path d="M90 120 C90 120 122 108 135 85" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
-          <path d="M90 160 C90 160 65 148 55 125" stroke="#6aaa88" strokeWidth="0.6" opacity="0.3" />
-          <path d="M90 160 C90 160 115 148 125 125" stroke="#6aaa88" strokeWidth="0.6" opacity="0.3" />
-        </svg>
+            {/* Floating botanical SVGs */}
+            <svg
+              aria-hidden="true"
+              className="sh-hero-deco-svg"
+              style={{
+                position: "absolute",
+                top: "8%",
+                right: "6%",
+                opacity: 0.12,
+                animation: "sh-float-leaf 7s ease-in-out infinite",
+              }}
+              width="180"
+              height="240"
+              viewBox="0 0 180 240"
+              fill="none"
+            >
+              <path d="M90 220 C90 220 30 160 30 100 C30 60 55 20 90 10 C125 20 150 60 150 100 C150 160 90 220 90 220Z" stroke="#6aaa88" strokeWidth="1" fill="rgba(106,170,136,0.06)" />
+              <path d="M90 220 L90 30" stroke="#6aaa88" strokeWidth="0.8" opacity="0.5" />
+              <path d="M90 80 C90 80 60 70 50 50" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
+              <path d="M90 80 C90 80 120 70 130 50" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
+              <path d="M90 120 C90 120 58 108 45 85" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
+              <path d="M90 120 C90 120 122 108 135 85" stroke="#6aaa88" strokeWidth="0.6" opacity="0.4" />
+              <path d="M90 160 C90 160 65 148 55 125" stroke="#6aaa88" strokeWidth="0.6" opacity="0.3" />
+              <path d="M90 160 C90 160 115 148 125 125" stroke="#6aaa88" strokeWidth="0.6" opacity="0.3" />
+            </svg>
 
-        <svg
-          aria-hidden="true"
-          className="sh-hero-deco-svg"
-          style={{
-            position: "absolute",
-            bottom: "10%",
-            left: "4%",
-            opacity: 0.1,
-            animation: "sh-float-leaf 9s ease-in-out infinite 2s",
-          }}
-          width="120"
-          height="160"
-          viewBox="0 0 120 160"
-          fill="none"
-        >
-          <path d="M60 150 C60 150 10 100 15 50 C20 20 40 5 60 5 C80 5 100 20 105 50 C110 100 60 150 60 150Z" stroke="#c9923a" strokeWidth="1" fill="rgba(201,146,58,0.05)" />
-          <path d="M60 150 L60 20" stroke="#c9923a" strokeWidth="0.7" opacity="0.4" />
-        </svg>
+            <svg
+              aria-hidden="true"
+              className="sh-hero-deco-svg"
+              style={{
+                position: "absolute",
+                bottom: "10%",
+                left: "4%",
+                opacity: 0.1,
+                animation: "sh-float-leaf 9s ease-in-out infinite 2s",
+              }}
+              width="120"
+              height="160"
+              viewBox="0 0 120 160"
+              fill="none"
+            >
+              <path d="M60 150 C60 150 10 100 15 50 C20 20 40 5 60 5 C80 5 100 20 105 50 C110 100 60 150 60 150Z" stroke="#c9923a" strokeWidth="1" fill="rgba(201,146,58,0.05)" />
+              <path d="M60 150 L60 20" stroke="#c9923a" strokeWidth="0.7" opacity="0.4" />
+            </svg>
 
-        {/* Content */}
-        <div style={{ position: "relative", zIndex: 2, maxWidth: 900, padding: "0 2rem" }}>
-          <div
-            style={{
-              fontFamily: "var(--sh-sans)",
-              fontSize: "0.62rem",
-              letterSpacing: "0.35em",
-              textTransform: "uppercase",
-              color: "var(--sh-gold)",
-              marginBottom: "2rem",
-              animation: "sh-fade-up 1s ease both",
-              animationDelay: "0.1s",
-            }}
-          >
-            Santa Rosa de Cabal · Colombia · Desde 2012
-          </div>
+            {/* Content */}
+            <div style={{ position: "relative", zIndex: 2, maxWidth: 900, padding: "0 2rem" }}>
+              <div
+                style={{
+                  fontFamily: "var(--sh-sans)",
+                  fontSize: "0.62rem",
+                  letterSpacing: "0.35em",
+                  textTransform: "uppercase",
+                  color: "var(--sh-gold)",
+                  marginBottom: "2rem",
+                  animation: "sh-fade-up 1s ease both",
+                  animationDelay: "0.1s",
+                }}
+              >
+                Santa Rosa de Cabal · Colombia · Desde 2012
+              </div>
 
-          <h1
-            style={{
-              fontFamily: "var(--sh-serif)",
-              fontSize: "clamp(3.2rem, 8vw, 7rem)",
-              fontWeight: 300,
-              lineHeight: 1.05,
-              letterSpacing: "-0.01em",
-              color: "var(--sh-cream)",
-              marginBottom: "1.5rem",
-            }}
-          >
-            <HeroText text="Donde la tierra" delay={0.3} />
-            <br />
-            <span style={{ fontStyle: "italic", color: "var(--sh-gold)" }}>
-              <HeroText text="habla y sana." delay={0.9} />
-            </span>
-          </h1>
+              <h1
+                style={{
+                  fontFamily: "var(--sh-serif)",
+                  fontSize: "clamp(3.2rem, 8vw, 7rem)",
+                  fontWeight: 300,
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.01em",
+                  color: "var(--sh-cream)",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <HeroText text="Donde la tierra" delay={0.3} />
+                <br />
+                <span style={{ fontStyle: "italic", color: "var(--sh-gold)" }}>
+                  <HeroText text="habla y sana." delay={0.9} />
+                </span>
+              </h1>
 
-          <p
-            style={{
-              fontFamily: "var(--sh-sans)",
-              fontSize: "1rem",
-              color: "var(--sh-cream-2)",
-              fontWeight: 300,
-              maxWidth: "50ch",
-              margin: "0 auto 3rem",
-              lineHeight: 1.8,
-              animation: "sh-fade-up 1s ease both",
-              animationDelay: "0.9s",
-            }}
-          >
-            Herboristería boutique y hostal de bienestar en el corazón del Eje
-            Cafetero. Plantas, remedios y descanso auténtico.
-          </p>
+              <p
+                style={{
+                  fontFamily: "var(--sh-sans)",
+                  fontSize: "1rem",
+                  color: "var(--sh-cream-2)",
+                  fontWeight: 300,
+                  maxWidth: "50ch",
+                  margin: "0 auto 3rem",
+                  lineHeight: 1.8,
+                  animation: "sh-fade-up 1s ease both",
+                  animationDelay: "0.9s",
+                }}
+              >
+                Herbolaria boutique y hospedaje de bienestar en el corazón del Eje
+                Cafetero. Plantas, remedios y descanso auténtico.
+              </p>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "1rem",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              animation: "sh-fade-up 1s ease both",
-              animationDelay: "1.1s",
-            }}
-          >
-            <Link href="/tienda" style={btnPrimaryStyle}>
-              Explorar tienda <ArrowRight size={14} />
-            </Link>
-            <Link href="/hostal" style={btnOutlineStyle}>
-              Reservar estadía
-            </Link>
-          </div>
-        </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "1rem",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  animation: "sh-fade-up 1s ease both",
+                  animationDelay: "1.1s",
+                }}
+              >
+                <Link href="/tienda" style={btnPrimaryStyle}>
+                  Explorar tienda <ArrowRight size={14} />
+                </Link>
+                <Link href="/hostal" style={btnOutlineStyle}>
+                  Reservar estadía
+                </Link>
+              </div>
+            </div>
 
-        {/* Scroll indicator */}
-        <div
-          aria-hidden="true"
-          className="sh-hero-scroll-hint"
-          style={{
-            position: "absolute",
-            bottom: "3rem",
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.6rem",
-            animation: "sh-fade-up 1s ease both",
-            animationDelay: "1.4s",
-          }}
-        >
-          <span style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--sh-cream-3)" }}>
-            Scroll
-          </span>
-          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom, var(--sh-gold), transparent)", animation: "sh-line-grow 2s ease-in-out infinite" }} />
-        </div>
+            {/* Scroll indicator */}
+            <div
+              aria-hidden="true"
+              className="sh-hero-scroll-hint"
+              style={{
+                position: "absolute",
+                bottom: "3rem",
+                left: "50%",
+                transform: "translateX(-50%)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.6rem",
+                animation: "sh-fade-up 1s ease both",
+                animationDelay: "1.4s",
+              }}
+            >
+              <span style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--sh-cream-3)" }}>
+                Scroll
+              </span>
+              <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom, var(--sh-gold), transparent)", animation: "sh-line-grow 2s ease-in-out infinite" }} />
+            </div>
+          </>
+        )}
       </section>
 
       {/* ── STATS ─────────────────────────────────────────────── */}
@@ -425,7 +447,7 @@ export default async function Home() {
           }}
         >
           <div className="sh-reveal-left">
-            <Eyebrow>Nuestra historia</Eyebrow>
+            <Eyebrow>{siteConfig.historia_subtitulo}</Eyebrow>
             <h2
               className="sh-reveal"
               data-delay="100"
@@ -438,20 +460,13 @@ export default async function Home() {
                 color: "var(--sh-cream)",
               }}
             >
-              Doce años cultivando
-              <br />
-              <em style={{ color: "var(--sh-gold)" }}>sabiduría vegetal</em>
+              {siteConfig.historia_titulo}
             </h2>
             <p style={{ color: "var(--sh-cream-2)", lineHeight: 1.9, marginBottom: "1.5rem", fontSize: "0.9rem" }}>
-              Siete Hierbas nació de una pregunta simple: ¿qué sabe el bosque
-              que nosotros hemos olvidado? En 2012, en las faldas de los Andes
-              colombianos, empezamos a cultivar, recolectar y transformar
-              plantas medicinales con el respeto que merecen.
+              {siteConfig.historia_parrafo1}
             </p>
             <p style={{ color: "var(--sh-cream-2)", lineHeight: 1.9, marginBottom: "2.5rem", fontSize: "0.9rem" }}>
-              Hoy somos herboristería, hostal y escuela de bienestar. Un espacio
-              donde el conocimiento ancestral se encuentra con la sensibilidad
-              contemporánea.
+              {siteConfig.historia_parrafo2}
             </p>
             <Link href="/contacto" style={btnOutlineStyle}>
               Escríbenos <ArrowRight size={14} />
@@ -459,11 +474,17 @@ export default async function Home() {
           </div>
 
           <div className="sh-reveal-right" style={{ position: "relative" }}>
-            <ImgPlaceholder
-              label="Jardín de hierbas / fotografía editorial"
-              height={500}
-              icon={<LeafIcon size={32} color="var(--sh-cream-3)" />}
-            />
+            {siteConfig.historia_imagen_url ? (
+              <div style={{ height: 500, position: "relative", background: "var(--sh-dark-3)" }}>
+                <Image src={siteConfig.historia_imagen_url} alt={siteConfig.historia_titulo} fill className="object-cover" />
+              </div>
+            ) : (
+              <ImgPlaceholder
+                label="Jardín de hierbas / fotografía editorial"
+                height={500}
+                icon={<LeafIcon size={32} color="var(--sh-cream-3)" />}
+              />
+            )}
             <div
               className="sh-history-badge"
               style={{
@@ -598,13 +619,15 @@ export default async function Home() {
           }}
         >
           <div className="sh-reveal-left sh-hostal-img-wrapper">
-            {habitacionDestacada?.imagen_principal ? (
-              <div style={{ height: 550, position: "relative", background: "var(--sh-dark-3)" }}>
-                <Image src={habitacionDestacada.imagen_principal} alt={habitacionDestacada.nombre} fill className="object-cover" />
-              </div>
+            {habitacionDestacada && habitacionDestacada.imagenes.length > 0 ? (
+              <HostalImageSlider
+                imagenes={habitacionDestacada.imagenes}
+                nombre={habitacionDestacada.nombre}
+                height={550}
+              />
             ) : (
               <ImgPlaceholder
-                label="Habitación hostal / jardín de bienestar"
+                label="Habitación hospedaje / jardín de bienestar"
                 height={550}
                 icon={<MoonIcon size={32} color="var(--sh-cream-3)" />}
               />
@@ -634,7 +657,7 @@ export default async function Home() {
           </div>
 
           <div className="sh-reveal-right">
-            <Eyebrow>El Hostal</Eyebrow>
+            <Eyebrow>{siteConfig.hostal_subtitulo}</Eyebrow>
             <h2
               style={{
                 fontFamily: "var(--sh-serif)",
@@ -645,9 +668,7 @@ export default async function Home() {
                 color: "var(--sh-cream)",
               }}
             >
-              Descanso entre
-              <br />
-              <em style={{ color: "var(--sh-mint)" }}>hierba y montaña</em>
+              {siteConfig.hostal_titulo}
             </h2>
             <p
               style={{
@@ -657,10 +678,7 @@ export default async function Home() {
                 fontSize: "0.9rem",
               }}
             >
-              Nuestro hostal boutique es una extensión del jardín. Habitaciones
-              diseñadas para el silencio, con vista a la naturaleza andina,
-              aromaterapia y acceso a termas. Un retiro genuino a minutos del
-              centro de Santa Rosa de Cabal.
+              {siteConfig.hostal_parrafo}
             </p>
             <div
               style={{
@@ -670,12 +688,7 @@ export default async function Home() {
                 marginBottom: "2.5rem",
               }}
             >
-              {[
-                "Desayuno herbal incluido",
-                "Acceso a termas cercanas",
-                "Aromaterapia y bienestar",
-                "Wifi y zonas de descanso",
-              ].map((item) => (
+              {siteConfig.hostal_caracteristicas.map((item) => (
                 <div
                   key={item}
                   style={{
@@ -720,7 +733,7 @@ export default async function Home() {
       >
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-            <Eyebrow center>¿Por qué elegirnos?</Eyebrow>
+            <Eyebrow center>{siteConfig.por_que_subtitulo}</Eyebrow>
             <h2
               className="sh-reveal"
               data-delay="100"
@@ -731,8 +744,7 @@ export default async function Home() {
                 color: "var(--sh-cream)",
               }}
             >
-              Una experiencia que{" "}
-              <em style={{ color: "var(--sh-gold)" }}>trasciende</em>
+              {siteConfig.por_que_titulo}
             </h2>
           </div>
           <div
@@ -742,8 +754,8 @@ export default async function Home() {
               gap: "1.5rem",
             }}
           >
-            {EXPERIENCE_CARDS.map((card, i) => (
-              <ExperienceCard key={i} {...card} delay={i * 100} />
+            {siteConfig.por_que_cards.map((card, i) => (
+              <ExperienceCard key={i} icon={getIconByName(card.icono)} title={card.titulo} desc={card.descripcion} delay={i * 100} />
             ))}
           </div>
         </div>
@@ -841,12 +853,17 @@ export default async function Home() {
               flexWrap: "wrap",
             }}
           >
-            <Link href="/hostal" style={btnPrimaryStyle}>
-              Reservar estadía <ArrowRight size={14} />
+            <Link href="/tienda" style={btnPrimaryStyle}>
+              Visitar tienda <ArrowRight size={14} />
             </Link>
-            <Link href="/contacto" style={btnOutlineStyle}>
+            <a
+              href="https://www.google.com/maps/place/Siete+Hierbas+Hostal/@4.862067,-75.612707,17z/data=!3m1!4b1!4m9!3m8!1s0x8e38822cd1ec0ecf:0xd15d2f301e20f53b!5m2!4m1!1i2!8m2!3d4.862067!4d-75.612707!16s%2Fg%2F11cn0rc2lz?entry=ttu&g_ep=EgoyMDI2MDUwMi4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={btnOutlineStyle}
+            >
               Cómo llegar
-            </Link>
+            </a>
           </div>
         </div>
       </section>

@@ -1,6 +1,9 @@
 import Link from "next/link";
 
-export function SiteFooter() {
+import { getCategorias } from "@/lib/queries/categorias";
+
+export async function SiteFooter() {
+  const [categorias] = await Promise.all([getCategorias()]);
   const year = new Date().getFullYear();
 
   return (
@@ -63,7 +66,7 @@ export function SiteFooter() {
                 maxWidth: "24ch",
               }}
             >
-              Herboristería boutique y hostal de descanso en el corazón cafetero
+              Herbolaria boutique y hospedaje de descanso en el corazón cafetero
               de Colombia.
             </p>
             <p
@@ -83,17 +86,20 @@ export function SiteFooter() {
           <FooterCol title="Navegación">
             <FooterLink href="/">Inicio</FooterLink>
             <FooterLink href="/tienda">Tienda</FooterLink>
-            <FooterLink href="/hostal">Hostal</FooterLink>
+            <FooterLink href="/hostal">Hospedaje</FooterLink>
             <FooterLink href="/contacto">Contacto</FooterLink>
           </FooterCol>
 
           {/* Productos */}
           <FooterCol title="Productos">
-            <FooterLink href="/tienda">Tés medicinales</FooterLink>
-            <FooterLink href="/tienda">Tinturas</FooterLink>
-            <FooterLink href="/tienda">Aceites esenciales</FooterLink>
-            <FooterLink href="/tienda">Plantas frescas</FooterLink>
-            <FooterLink href="/tienda">Remedios herbales</FooterLink>
+            {categorias.map((cat) => (
+              <FooterLink key={cat.id} href={`/tienda?categoria=${cat.slug}`}>
+                {cat.nombre}
+              </FooterLink>
+            ))}
+            {categorias.length === 0 && (
+              <FooterLink href="/tienda">Ver todos</FooterLink>
+            )}
           </FooterCol>
 
           {/* Contacto */}

@@ -112,6 +112,102 @@ export type Database = {
           },
         ]
       }
+      hero_slides: {
+        Row: {
+          id: string
+          imagen_url: string
+          titulo: string
+          subtitulo: string | null
+          boton_texto: string
+          boton_link: string
+          orden: number
+          activo: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          imagen_url: string
+          titulo?: string
+          subtitulo?: string | null
+          boton_texto?: string
+          boton_link?: string
+          orden?: number
+          activo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          imagen_url?: string
+          titulo?: string
+          subtitulo?: string | null
+          boton_texto?: string
+          boton_link?: string
+          orden?: number
+          activo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_config: {
+        Row: {
+          id: string
+          info_bar_texto: string
+          info_bar_visible: boolean
+          historia_titulo: string
+          historia_subtitulo: string
+          historia_parrafo1: string
+          historia_parrafo2: string
+          historia_imagen_url: string | null
+          hostal_titulo: string
+          hostal_subtitulo: string
+          hostal_parrafo: string
+          hostal_caracteristicas: string[]
+          por_que_titulo: string
+          por_que_subtitulo: string
+          por_que_cards: Json
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          info_bar_texto?: string
+          info_bar_visible?: boolean
+          historia_titulo?: string
+          historia_subtitulo?: string
+          historia_parrafo1?: string
+          historia_parrafo2?: string
+          historia_imagen_url?: string | null
+          hostal_titulo?: string
+          hostal_subtitulo?: string
+          hostal_parrafo?: string
+          hostal_caracteristicas?: string[]
+          por_que_titulo?: string
+          por_que_subtitulo?: string
+          por_que_cards?: Json
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          info_bar_texto?: string
+          info_bar_visible?: boolean
+          historia_titulo?: string
+          historia_subtitulo?: string
+          historia_parrafo1?: string
+          historia_parrafo2?: string
+          historia_imagen_url?: string | null
+          hostal_titulo?: string
+          hostal_subtitulo?: string
+          hostal_parrafo?: string
+          hostal_caracteristicas?: string[]
+          por_que_titulo?: string
+          por_que_subtitulo?: string
+          por_que_cards?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       habitaciones: {
         Row: {
           amenidades: string[]
