@@ -375,6 +375,86 @@ function HospedajeTab({ config }: { config: SiteConfig }) {
   );
 }
 
+function PopupTab({ config }: { config: SiteConfig }) {
+  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<SiteConfigInput>({
+    resolver: zodResolver(siteConfigSchema),
+    defaultValues: config as SiteConfigInput,
+  });
+
+  const activo = watch("popup_activo");
+
+  const onSubmit = async (data: SiteConfigInput) => {
+    setLoading(true);
+    const result = await updateSiteConfig(data);
+    setStatus({ ok: result.ok, message: result.ok ? "Guardado correctamente." : (result.error ?? "Error al guardar.") });
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Popup de bienvenida</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="popup_activo"
+              checked={activo}
+              onChange={(e) => setValue("popup_activo", e.target.checked)}
+              className="h-4 w-4 rounded border-zinc-300"
+            />
+            <Label htmlFor="popup_activo" className="cursor-pointer">
+              Mostrar popup al entrar a la página principal
+            </Label>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="popup_imagen_url">URL de la imagen</Label>
+            <Input
+              id="popup_imagen_url"
+              placeholder="https://..."
+              {...register("popup_imagen_url")}
+            />
+            {errors.popup_imagen_url && (
+              <p className="text-xs text-red-500">{errors.popup_imagen_url.message as string}</p>
+            )}
+            <p className="text-xs text-zinc-400">Imagen que se mostrará en el popup. Recomendado: formato cuadrado o vertical.</p>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="popup_link">Link al hacer clic en la imagen</Label>
+            <Input
+              id="popup_link"
+              placeholder="Ej: /tienda o https://..."
+              {...register("popup_link")}
+            />
+            {errors.popup_link && (
+              <p className="text-xs text-red-500">{errors.popup_link.message}</p>
+            )}
+            <p className="text-xs text-zinc-400">Dejá en blanco si no querés que la imagen lleve a ningún lugar.</p>
+          </div>
+
+          <Button type="submit" disabled={loading}>
+            {loading ? "Guardando..." : "Guardar"}
+          </Button>
+          {status && <Feedback {...status} />}
+        </CardContent>
+      </Card>
+    </form>
+  );
+}
+
 const ICON_OPTIONS = ["leaf", "flower", "drop", "moon", "sun", "shield", "heart", "star"];
 
 function PorQueTab({ config }: { config: SiteConfig }) {
@@ -490,6 +570,7 @@ export function HomeConfigClient({ config, slides }: Props) {
         <TabsTrigger value="historia">Nuestra historia</TabsTrigger>
         <TabsTrigger value="hospedaje">El Hospedaje</TabsTrigger>
         <TabsTrigger value="por-que">¿Por qué elegirnos?</TabsTrigger>
+        <TabsTrigger value="popup">Popup</TabsTrigger>
       </TabsList>
 
       <TabsContent value="info-bar">
@@ -510,6 +591,10 @@ export function HomeConfigClient({ config, slides }: Props) {
 
       <TabsContent value="por-que">
         <PorQueTab config={config} />
+      </TabsContent>
+
+      <TabsContent value="popup">
+        <PopupTab config={config} />
       </TabsContent>
     </Tabs>
   );

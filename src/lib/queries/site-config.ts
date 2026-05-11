@@ -22,6 +22,9 @@ export type SiteConfig = {
   por_que_titulo: string;
   por_que_subtitulo: string;
   por_que_cards: PorQueCard[];
+  popup_activo: boolean;
+  popup_imagen_url: string | null;
+  popup_link: string;
 };
 
 export type HeroSlide = {
@@ -65,6 +68,9 @@ const DEFAULT_CONFIG: SiteConfig = {
     { icono: "drop", titulo: "Elaboración artesanal", descripcion: "Cada tintura, aceite y preparado se elabora en pequeños lotes para garantizar frescura y potencia." },
     { icono: "moon", titulo: "Bienestar integral", descripcion: "El hospedaje ofrece programas de retiro y descanso, no solo una cama: una experiencia completa." },
   ],
+  popup_activo: false,
+  popup_imagen_url: null,
+  popup_link: "",
 };
 
 export async function getSiteConfig(): Promise<SiteConfig> {

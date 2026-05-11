@@ -21,6 +21,12 @@ export const siteConfigSchema = z.object({
   por_que_titulo: z.string().min(1).max(120),
   por_que_subtitulo: z.string().min(1).max(80),
   por_que_cards: z.array(porQueCardSchema).min(1).max(6),
+  popup_activo: z.boolean(),
+  popup_imagen_url: z.preprocess(
+    (v) => (v === "" ? null : v),
+    z.string().url("URL de imagen inválida").nullable(),
+  ),
+  popup_link: z.string().max(500),
 });
 
 export const heroSlideSchema = z.object({

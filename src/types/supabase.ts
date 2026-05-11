@@ -168,6 +168,9 @@ export type Database = {
           por_que_titulo: string
           por_que_subtitulo: string
           por_que_cards: Json
+          popup_activo: boolean
+          popup_imagen_url: string | null
+          popup_link: string
           updated_at: string
         }
         Insert: {
@@ -186,6 +189,9 @@ export type Database = {
           por_que_titulo?: string
           por_que_subtitulo?: string
           por_que_cards?: Json
+          popup_activo?: boolean
+          popup_imagen_url?: string | null
+          popup_link?: string
           updated_at?: string
         }
         Update: {
@@ -204,6 +210,9 @@ export type Database = {
           por_que_titulo?: string
           por_que_subtitulo?: string
           por_que_cards?: Json
+          popup_activo?: boolean
+          popup_imagen_url?: string | null
+          popup_link?: string
           updated_at?: string
         }
         Relationships: []

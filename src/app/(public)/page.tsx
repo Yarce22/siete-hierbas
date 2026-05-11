@@ -6,6 +6,7 @@ import { AnimatedCounter } from "@/components/public/animated-counter";
 import { TestimonialMarquee } from "@/components/public/testimonial-marquee";
 import { HeroSlider } from "@/components/public/hero-slider";
 import { HostalImageSlider } from "@/components/public/hostal-image-slider";
+import { PopupPromo } from "@/components/public/popup-promo";
 import { getProductos } from "@/lib/queries/productos";
 import { getHabitacionDestacada } from "@/lib/queries/habitaciones";
 import { getSiteConfig, getHeroSlides } from "@/lib/queries/site-config";
@@ -171,6 +172,10 @@ export default async function Home() {
       }}
     >
       <ScrollRevealInit />
+
+      {siteConfig.popup_activo && siteConfig.popup_imagen_url && (
+        <PopupPromo imagenUrl={siteConfig.popup_imagen_url} link={siteConfig.popup_link} />
+      )}
 
       <style>{`
         @keyframes sh-word-reveal {
