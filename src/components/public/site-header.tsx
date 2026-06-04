@@ -8,7 +8,6 @@ import { useCart } from "@/components/public/cart-provider";
 const LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/tienda", label: "Tienda" },
-  { href: "/hostal", label: "Hospedaje" },
   { href: "/contacto", label: "Contacto" },
 ];
 
@@ -66,9 +65,9 @@ export function SiteHeader() {
     alignItems: "center",
     justifyContent: "space-between",
     padding: scrolled ? "1rem 4rem" : "1.5rem 4rem",
-    background: scrolled ? "rgba(13,16,8,0.88)" : "transparent",
+    background: scrolled ? "rgba(42,56,24,0.92)" : "transparent",
     backdropFilter: scrolled ? "blur(14px)" : "none",
-    borderBottom: scrolled ? "1px solid rgba(228,215,184,0.07)" : "none",
+    borderBottom: scrolled ? "1px solid rgba(58,72,40,0.3)" : "none",
     transition:
       "background 0.5s ease, padding 0.3s ease, backdrop-filter 0.5s ease",
   };
@@ -83,7 +82,7 @@ export function SiteHeader() {
             fontSize: "1.4rem",
             fontWeight: 500,
             letterSpacing: "0.04em",
-            color: "var(--sh-cream)",
+            color: scrolled ? "var(--sh-cream)" : "var(--sh-forest)",
             textDecoration: "none",
             display: "flex",
             flexDirection: "column",
@@ -98,11 +97,11 @@ export function SiteHeader() {
               fontFamily: "var(--sh-sans)",
               letterSpacing: "0.2em",
               textTransform: "uppercase",
-              color: "var(--sh-gold)",
+              color: scrolled ? "var(--sh-cream)" : "var(--sh-forest)",
               fontWeight: 400,
             }}
           >
-            Herbolaria · Hospedaje · Santa Rosa de Cabal
+            Herbolaria · Santa Rosa de Cabal
           </span>
         </Link>
 
@@ -118,9 +117,12 @@ export function SiteHeader() {
               href={l.href}
               style={{
                 fontSize: "0.72rem",
+                fontWeight: pathname === l.href ? "bold" : "normal",
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                color: pathname === l.href ? "var(--sh-cream)" : "var(--sh-cream-2)",
+                color: scrolled
+                  ? (pathname === l.href ? "var(--sh-gold)" : "var(--sh-cream-2)")
+                  : (pathname === l.href ? "var(--sh-gold)" : "var(--sh-forest)"),
                 textDecoration: "none",
                 position: "relative",
                 paddingBottom: 3,
@@ -141,7 +143,7 @@ export function SiteHeader() {
             style={{
               background: "none",
               border: "none",
-              color: "var(--sh-cream)",
+              color: scrolled ? "var(--sh-cream)" : "var(--sh-forest)",
               cursor: "pointer",
               position: "relative",
               padding: "0.4rem",
@@ -155,8 +157,8 @@ export function SiteHeader() {
                   position: "absolute",
                   top: 0,
                   right: 0,
-                  background: "var(--sh-gold)",
-                  color: "var(--sh-dark)",
+                  background: "var(--sh-cream)",
+                  color: "var(--sh-dark-3)",
                   borderRadius: "50%",
                   width: 16,
                   height: 16,
@@ -172,23 +174,6 @@ export function SiteHeader() {
             )}
           </Link>
 
-          <Link
-            href="/hostal"
-            className="hidden md:inline-flex"
-            style={{
-              fontSize: "0.68rem",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              border: "1px solid rgba(201,146,58,0.5)",
-              color: "var(--sh-gold)",
-              padding: "0.55rem 1.4rem",
-              textDecoration: "none",
-              transition: "background 0.3s, color 0.3s, border-color 0.3s",
-            }}
-          >
-            Reservar
-          </Link>
-
           {/* Mobile hamburger */}
           <button
             className="flex md:hidden"
@@ -198,7 +183,7 @@ export function SiteHeader() {
               background: "none",
               border: "none",
               cursor: "pointer",
-              color: "var(--sh-cream)",
+              color: scrolled ? "var(--sh-cream)" : "var(--sh-forest)",
               flexDirection: "column",
               gap: 5,
             }}
@@ -216,7 +201,7 @@ export function SiteHeader() {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(13,16,8,0.97)",
+            background: "rgba(42,56,24,0.97)",
             zIndex: 950,
             display: "flex",
             flexDirection: "column",

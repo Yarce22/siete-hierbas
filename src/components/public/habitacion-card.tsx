@@ -38,7 +38,7 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
             <div style={{
               position: "absolute",
               inset: 0,
-              background: "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(228,215,184,0.012) 20px, rgba(228,215,184,0.012) 21px)",
+              background: "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(228,215,184,0.04) 20px, rgba(228,215,184,0.04) 21px)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -53,8 +53,8 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
             position: "absolute",
             top: "0.8rem",
             left: "0.8rem",
-            background: "rgba(13,16,8,0.75)",
-            border: "1px solid rgba(228,215,184,0.2)",
+            background: "rgba(42,56,24,0.85)",
+            border: "1px solid rgba(228,215,184,0.3)",
             padding: "0.2rem 0.6rem",
             fontSize: "0.6rem",
             letterSpacing: "0.15em",
@@ -70,7 +70,7 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
           style={{
             position: "absolute",
             inset: 0,
-            background: "rgba(13,16,8,0.65)",
+            background: "rgba(42,56,24,0.75)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -94,7 +94,7 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
           <div style={{
             fontFamily: "var(--sh-serif)",
             fontSize: "1.1rem",
-            color: "var(--sh-cream)",
+            color: "var(--sh-forest)",
             marginBottom: "0.5rem",
           }}>
             {habitacion.nombre}
@@ -104,7 +104,7 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
             alignItems: "center",
             gap: "0.4rem",
             fontSize: "0.78rem",
-            color: "var(--sh-cream-3)",
+            color: "var(--sh-forest)",
             marginBottom: "0.5rem",
           }}>
             <Users size={12} />
@@ -114,22 +114,22 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
             <div style={{ display: "flex", flexWrap: "wrap" as const, gap: "0.3rem", marginBottom: "0.6rem" }}>
               {habitacion.amenidades.slice(0, 3).map((a) => (
                 <span key={a} style={{
-                  background: "rgba(228,215,184,0.07)",
-                  border: "1px solid rgba(228,215,184,0.12)",
+                  background: "rgba(58,72,40,0.12)",
+                  border: "1px solid rgba(58,72,40,0.22)",
                   padding: "0.15rem 0.5rem",
                   fontSize: "0.6rem",
-                  color: "var(--sh-cream-3)",
+                  color: "var(--sh-forest)",
                 }}>
                   {a}
                 </span>
               ))}
               {habitacion.amenidades.length > 3 && (
                 <span style={{
-                  background: "rgba(228,215,184,0.07)",
-                  border: "1px solid rgba(228,215,184,0.12)",
+                  background: "rgba(58,72,40,0.12)",
+                  border: "1px solid rgba(58,72,40,0.22)",
                   padding: "0.15rem 0.5rem",
                   fontSize: "0.6rem",
-                  color: "var(--sh-cream-3)",
+                  color: "var(--sh-forest)",
                 }}>
                   +{habitacion.amenidades.length - 3}
                 </span>
@@ -138,7 +138,7 @@ export function HabitacionCard({ habitacion }: { habitacion: HabitacionListItem 
           )}
           <div style={{ fontSize: "0.82rem", color: "var(--sh-gold)" }}>
             {formatCOP(habitacion.precio_noche)}
-            <span style={{ color: "var(--sh-cream-3)", fontSize: "0.72rem", marginLeft: "0.3rem" }}>/ noche</span>
+            <span style={{ color: "var(--sh-forest)", fontSize: "0.72rem", marginLeft: "0.3rem" }}>/ noche</span>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { validateImageFile, MIME_TO_EXT } from "@/lib/utils/storage";
 
-type Bucket = "productos" | "habitaciones";
+type Bucket = "productos" | "habitaciones" | "home";
 
 export async function subirImagen(
   bucket: Bucket,
@@ -22,7 +22,7 @@ export async function subirImagen(
     .from(bucket)
     .upload(path, file, { upsert: false });
 
-  if (uploadError) return { error: "Error al subir la imagen." };
+  if (uploadError) return { error: uploadError.message };
 
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return { url: data.publicUrl };

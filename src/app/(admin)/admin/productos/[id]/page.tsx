@@ -23,7 +23,7 @@ export default async function EditarProducto({
       .from("productos")
       .select(
         `id, nombre, slug, descripcion, destacado, categoria_id,
-         producto_variantes ( id, nombre, precio, stock, stock_minimo, sku ),
+         producto_variantes ( id, nombre, precio, stock, stock_minimo, sku, deleted_at ),
          producto_imagenes ( id, url, alt_text, orden )`,
       )
       .eq("id", id)
@@ -46,6 +46,7 @@ export default async function EditarProducto({
       stock: number;
       stock_minimo: number;
       sku: string | null;
+      deleted_at: string | null;
     }[];
     producto_imagenes: {
       id: string;
@@ -56,7 +57,7 @@ export default async function EditarProducto({
   };
 
   const p = producto as ProdConRelaciones;
-  const variantes = p.producto_variantes ?? [];
+  const variantes = (p.producto_variantes ?? []).filter((v) => v.deleted_at === null);
   const imagenes = (p.producto_imagenes ?? []).sort((a, b) => a.orden - b.orden);
 
   return (

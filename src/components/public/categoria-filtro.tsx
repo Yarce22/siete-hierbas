@@ -10,7 +10,7 @@ type Props = {
 export function CategoriaFiltro({ categorias, activaSlug }: Props) {
   const base = "px-3 py-1 text-sm transition-colors";
   const activa = "border border-[var(--sh-gold)] text-[var(--sh-gold)]";
-  const inactiva = "border border-[rgba(228,215,184,0.2)] text-[var(--sh-cream-2)] hover:border-[rgba(228,215,184,0.5)] hover:text-[var(--sh-cream)]";
+  const inactiva = "border border-[rgba(58,72,40,0.3)] text-[var(--sh-forest)] hover:border-[rgba(58,72,40,0.6)] hover:text-[var(--sh-forest)]";
 
   return (
     <nav className="flex flex-wrap gap-2" aria-label="Filtrar por categoría">

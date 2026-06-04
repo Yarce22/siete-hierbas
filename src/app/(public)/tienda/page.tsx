@@ -35,25 +35,25 @@ export default async function TiendaPage({
           fontSize: "0.62rem",
           letterSpacing: "0.3em",
           textTransform: "uppercase",
-          color: "var(--sh-gold)",
+          color: "var(--sh-forest)",
           marginBottom: "0.8rem",
           display: "flex",
           alignItems: "center",
           gap: "1rem",
         }}>
-          <span style={{ display: "block", width: "2rem", height: 1, background: "var(--sh-gold)" }} />
+          <span style={{ display: "block", width: "2rem", height: 1, background: "var(--sh-forest)" }} />
           Tienda
         </div>
         <h1 style={{
           fontFamily: "var(--sh-serif)",
           fontSize: "clamp(2rem,4vw,3rem)",
-          fontWeight: 300,
-          color: "var(--sh-cream)",
+          fontWeight: 500,
+          color: "var(--sh-forest)",
           marginBottom: "0.5rem",
         }}>
           {categoriaActiva ? categoriaActiva.nombre : "Todos los productos"}
         </h1>
-        <p style={{ color: "var(--sh-cream-3)", fontSize: "0.9rem" }}>
+        <p style={{ color: "var(--sh-forest)", fontSize: "1rem" }}>
           Productos naturales elaborados con hierbas de la región.
         </p>
       </header>
@@ -63,16 +63,16 @@ export default async function TiendaPage({
       <div style={{ marginTop: "3rem" }}>
         {productos.length === 0 ? (
           <div style={{
-            border: "1px dashed rgba(228,215,184,0.15)",
+            border: "1px dashed rgba(58,72,40,0.25)",
             padding: "4rem 2rem",
             textAlign: "center",
-            color: "var(--sh-cream-3)",
+            color: "var(--sh-forest)",
           }}>
-            <p style={{ fontFamily: "var(--sh-serif)", fontSize: "1.1rem", color: "var(--sh-cream-2)" }}>
+            <p style={{ fontFamily: "var(--sh-serif)", fontSize: "1.1rem", color: "var(--sh-forest)" }}>
               Todavía no hay productos por acá.
             </p>
             <p style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>
-              Pronto vas a encontrar algo bueno. ¡Volvé en unos días!
+              Pronto vas a encontrar algo bueno. ¡Vuelve en unos días!
             </p>
           </div>
         ) : (

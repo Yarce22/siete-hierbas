@@ -9,8 +9,8 @@ export async function SiteFooter() {
   return (
     <footer
       style={{
-        background: "var(--sh-dark-2)",
-        borderTop: "1px solid rgba(228,215,184,0.07)",
+        background: "var(--sh-dark-3)",
+        borderTop: "1px solid rgba(228,215,184,0.12)",
         padding: "5rem 4rem 2.5rem",
         position: "relative",
         fontFamily: "var(--sh-sans)",
@@ -23,7 +23,7 @@ export async function SiteFooter() {
           position: "absolute",
           inset: 0,
           background:
-            "repeating-linear-gradient(135deg, transparent, transparent 30px, rgba(228,215,184,0.012) 30px, rgba(228,215,184,0.012) 31px)",
+            "repeating-linear-gradient(135deg, transparent, transparent 30px, rgba(228,215,184,0.025) 30px, rgba(228,215,184,0.025) 31px)",
           pointerEvents: "none",
         }}
       />
@@ -66,8 +66,7 @@ export async function SiteFooter() {
                 maxWidth: "24ch",
               }}
             >
-              Herbolaria boutique y hospedaje de descanso en el corazón cafetero
-              de Colombia.
+              Herbolaria boutique en el corazón cafetero de Colombia.
             </p>
             <p
               style={{
@@ -86,7 +85,6 @@ export async function SiteFooter() {
           <FooterCol title="Navegación">
             <FooterLink href="/">Inicio</FooterLink>
             <FooterLink href="/tienda">Tienda</FooterLink>
-            <FooterLink href="/hostal">Hospedaje</FooterLink>
             <FooterLink href="/contacto">Contacto</FooterLink>
           </FooterCol>
 
@@ -111,14 +109,14 @@ export async function SiteFooter() {
                 lineHeight: 1.5,
               }}
             >
-              Calle 7 #8-42, Santa Rosa de Cabal, Risaralda
+              Paisaje Cultural Cafetero, Colombia
             </span>
-            <FooterLink href="tel:+573001234567">+57 300 123 4567</FooterLink>
-            <FooterLink href="mailto:hola@sietehierbas.co">
-              hola@sietehierbas.co
+            <FooterLink href="https://wa.me/573103180273">+57 310 318 0273</FooterLink>
+            <FooterLink href="mailto:yerbateriacolombia@gmail.com">
+              yerbateriacolombia@gmail.com
             </FooterLink>
             <span style={{ color: "var(--sh-cream-3)", fontSize: "0.82rem" }}>
-              Lun–Dom · 8am–7pm
+              Atención OnLine
             </span>
           </FooterCol>
         </div>
@@ -130,7 +128,7 @@ export async function SiteFooter() {
             justifyContent: "space-between",
             alignItems: "center",
             paddingTop: "2rem",
-            borderTop: "1px solid rgba(228,215,184,0.06)",
+            borderTop: "1px solid rgba(228,215,184,0.12)",
             flexWrap: "wrap",
             gap: "1rem",
           }}
@@ -184,11 +182,11 @@ function FooterCol({
         style={{
           fontFamily: "var(--sh-sans)",
           fontSize: "0.62rem",
+          fontWeight: 500,
           letterSpacing: "0.25em",
           textTransform: "uppercase",
-          color: "var(--sh-gold)",
+          color: "var(--sh-cream)",
           marginBottom: "1.5rem",
-          fontWeight: 400,
         }}
       >
         {title}

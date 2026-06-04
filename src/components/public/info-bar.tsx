@@ -7,8 +7,8 @@ export async function InfoBar() {
   return (
     <div
       style={{
-        background: "var(--sh-dark-2)",
-        borderBottom: "1px solid rgba(228,215,184,0.08)",
+        background: "var(--sh-dark-3)",
+        borderBottom: "1px solid rgba(228,215,184,0.12)",
         textAlign: "center",
         padding: "0.55rem 1rem",
         fontSize: "0.72rem",

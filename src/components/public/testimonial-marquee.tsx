@@ -39,7 +39,7 @@ export function TestimonialMarquee() {
           top: 0,
           bottom: 0,
           width: 120,
-          background: "linear-gradient(to right, var(--sh-dark-2), transparent)",
+          background: "linear-gradient(to right, var(--sh-dark), transparent)",
           zIndex: 2,
           pointerEvents: "none",
         }}
@@ -52,7 +52,7 @@ export function TestimonialMarquee() {
           bottom: 0,
           width: 120,
           background:
-            "linear-gradient(to left, var(--sh-dark-2), transparent)",
+            "linear-gradient(to left, var(--sh-dark), transparent)",
           zIndex: 2,
           pointerEvents: "none",
         }}
@@ -71,8 +71,8 @@ export function TestimonialMarquee() {
             className="sh-testimonial-card"
             style={{
               minWidth: 320,
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(228,215,184,0.08)",
+              background: "rgba(58,72,40,0.12)",
+              border: "1px solid rgba(58,72,40,0.2)",
               padding: "2rem 2.5rem",
               display: "flex",
               flexDirection: "column",
@@ -100,7 +100,7 @@ export function TestimonialMarquee() {
                 fontFamily: "var(--sh-serif)",
                 fontSize: "1.05rem",
                 fontStyle: "italic",
-                color: "var(--sh-cream)",
+                color: "var(--sh-forest)",
                 lineHeight: 1.6,
               }}
             >

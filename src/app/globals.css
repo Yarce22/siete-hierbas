@@ -134,20 +134,23 @@
    ───────────────────────────────────────────────────────── */
 
 :root {
-  --sh-dark:    #0d1008;
-  --sh-dark-2:  #161b0e;
-  --sh-dark-3:  #1d2414;
-  --sh-dark-4:  #26301b;
-  --sh-dark-5:  #2f3a22;
-  --sh-cream:   #e4d7b8;
-  --sh-cream-2: #ccc1a0;
-  --sh-cream-3: #b0a682;
+  --sh-dark:    #8FA876;
+  --sh-dark-2:  #87976F;
+  --sh-dark-3:  #3A4828;
+  --sh-dark-4:  #2E3A20;
+  --sh-dark-5:  #253018;
+  --sh-forest:  #2A3818;
+  --sh-cream:   #F0E6CC;
+  --sh-cream-2: #D8CEB0;
+  --sh-cream-3: #BFB28E;
   --sh-moss:    #3a5a3c;
   --sh-moss-l:  #567a58;
   --sh-ochre:   #b8762c;
-  --sh-gold:    #c9923a;
+  --sh-gold:    #75681C;
   --sh-gold-l:  #d9ab5a;
   --sh-mint:    #6aaa88;
+  --sh-wood: rgba(60, 45, 53, 1);
+  --sh-dark-olive: rgba(30, 50, 40, 1);
   --sh-serif:   var(--font-serif), 'Cormorant Garamond', Georgia, serif;
   --sh-sans:    var(--font-dm-sans), 'DM Sans', system-ui, sans-serif;
   --sh-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -264,7 +267,7 @@
   font-size: 0.62rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--sh-gold);
+  color: var(--sh-wood);
   font-weight: 400;
   margin-bottom: 1.2rem;
   display: flex;
@@ -276,7 +279,7 @@
   display: block;
   width: 2rem;
   height: 1px;
-  background: var(--sh-gold);
+  background: var(--sh-wood);
 }
 
 /* ── PUBLIC NAV ───────────────────────────────────────── */
@@ -291,10 +294,10 @@
   transition: background 0.5s ease, padding 0.3s ease, backdrop-filter 0.5s ease;
 }
 .sh-nav.sh-scrolled {
-  background: rgba(13,16,8,0.88);
+  background: rgba(42,56,24,0.92);
   backdrop-filter: blur(14px);
   padding: 1rem 4rem;
-  border-bottom: 1px solid rgba(228,215,184,0.07);
+  border-bottom: 1px solid rgba(58,72,40,0.3);
 }
 @media (max-width: 768px) {
   .sh-nav { padding: 1.2rem 1.5rem; }
@@ -339,7 +342,7 @@
 }
 @media (max-width: 640px) {
   .sh-layout-stats { grid-template-columns: 1fr !important; gap: 0 !important; }
-  .sh-stat-item { padding: 2rem 0; border-bottom: 1px solid rgba(228,215,184,0.07); }
+  .sh-stat-item { padding: 2rem 0; border-bottom: 1px solid rgba(58,72,40,0.2); }
   .sh-stat-item:last-child { border-bottom: none; }
 }
 

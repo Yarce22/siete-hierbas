@@ -38,5 +38,8 @@ export const heroSlideSchema = z.object({
   orden: z.number().int().min(0),
 });
 
+export const heroSlideFormSchema = heroSlideSchema.omit({ imagen_url: true });
+
 export type SiteConfigInput = z.infer<typeof siteConfigSchema>;
 export type HeroSlideInput = z.infer<typeof heroSlideSchema>;
+export type HeroSlideFormInput = z.infer<typeof heroSlideFormSchema>;

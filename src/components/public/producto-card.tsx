@@ -37,7 +37,7 @@ export function ProductoCard({ producto }: { producto: ProductoListItem }) {
             <div style={{
               position: "absolute",
               inset: 0,
-              background: "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(228,215,184,0.012) 20px, rgba(228,215,184,0.012) 21px)",
+              background: "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(228,215,184,0.04) 20px, rgba(228,215,184,0.04) 21px)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -57,7 +57,7 @@ export function ProductoCard({ producto }: { producto: ProductoListItem }) {
           style={{
             position: "absolute",
             inset: 0,
-            background: "rgba(13,16,8,0.65)",
+            background: "rgba(42,56,24,0.75)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -83,7 +83,7 @@ export function ProductoCard({ producto }: { producto: ProductoListItem }) {
               fontSize: "0.6rem",
               letterSpacing: "0.2em",
               textTransform: "uppercase" as const,
-              color: "var(--sh-mint)",
+              color: "var(--sh-forest)",
               marginBottom: "0.4rem",
             }}>
               {producto.categoria.nombre}
@@ -91,8 +91,9 @@ export function ProductoCard({ producto }: { producto: ProductoListItem }) {
           )}
           <div style={{
             fontFamily: "var(--sh-serif)",
-            fontSize: "1.1rem",
-            color: "var(--sh-cream)",
+            fontSize: "1.3rem",
+            fontWeight: "bold",
+            color: "var(--sh-forest)",
           }}>
             {producto.nombre}
           </div>

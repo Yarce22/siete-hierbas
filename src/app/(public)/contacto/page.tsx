@@ -3,11 +3,10 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contacto — Siete Hierbas",
   description:
-    "Contactanos por WhatsApp para pedidos de productos naturistas o reservas del hostal en Santa Rosa de Cabal.",
+    "Contactanos por WhatsApp para consultas sobre productos naturistas y pedidos en Santa Rosa de Cabal.",
 };
 
-const WA_TIENDA = "573XXXXXXXXX";
-const WA_HOSTAL = "573XXXXXXXXX";
+const WA_TIENDA = "573103180273";
 
 function WhatsAppIcon() {
   return (
@@ -47,7 +46,7 @@ function InstagramIcon() {
 
 const dividerStyle: React.CSSProperties = {
   border: "none",
-  borderTop: "1px solid rgba(228,215,184,0.08)",
+  borderTop: "1px solid rgba(58,72,40,0.2)",
   margin: "0",
 };
 
@@ -65,7 +64,7 @@ export default function ContactoPage() {
     <div
       style={{
         fontFamily: "var(--sh-sans)",
-        color: "var(--sh-cream)",
+        color: "var(--sh-forest)",
         minHeight: "80vh",
       }}
     >
@@ -82,199 +81,147 @@ export default function ContactoPage() {
           style={{
             fontFamily: "var(--sh-serif)",
             fontSize: "clamp(2.4rem, 6vw, 4rem)",
-            fontWeight: 400,
+            fontWeight: 500,
             lineHeight: 1.1,
-            color: "var(--sh-cream)",
+            color: "var(--sh-forest)",
             margin: "0.75rem 0 1.25rem",
             letterSpacing: "-0.01em",
           }}
         >
-          Estamos en Santa Rosa de Cabal
+          Estamos en el Paisaje Cultural Cafetero.
         </h1>
         <p
           style={{
             fontSize: "1rem",
-            color: "var(--sh-cream-2)",
+            color: "var(--sh-forest)",
             fontWeight: 300,
             maxWidth: 520,
             lineHeight: 1.7,
           }}
         >
-          Escribinos por WhatsApp para consultas sobre productos naturistas,
-          pedidos o reservas del hostal. Respondemos rápido.
+          Escribinos por WhatsApp para consultas sobre productos naturistas
+          y pedidos. Respondemos rápido.
         </p>
       </section>
 
-      {/* ── CONTACT CARDS ───────────────────────────────── */}
-      <section
-        style={{
-          maxWidth: 900,
-          margin: "0 auto",
-          padding: "0 2rem 5rem",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "1.5rem",
-        }}
-      >
-        {/* Herboristería */}
+      {/* ── CONTACT CARD ────────────────────────────────── */}
+      <section style={{ maxWidth: 900, margin: "0 auto", padding: "0 2rem 5rem" }}>
         <div
           style={{
             background: "var(--sh-dark-2)",
             border: "1px solid rgba(228,215,184,0.08)",
-            padding: "2.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2rem",
+            display: "grid",
+            gridTemplateColumns: "1fr 1px 1fr",
+            overflow: "hidden",
           }}
+          className="sh-contact-card"
         >
-          <div>
-            <p style={labelStyle}>Herboristería · Tienda</p>
+          {/* ── Columna izquierda: identidad ── */}
+          <div style={{ padding: "3.5rem 3.5rem 3.5rem 3rem" }}>
+            <p style={labelStyle}>Tienda Herbolaria</p>
             <h2
               style={{
                 fontFamily: "var(--sh-serif)",
-                fontSize: "1.9rem",
+                fontSize: "clamp(2rem, 3.5vw, 2.8rem)",
                 fontWeight: 400,
-                color: "var(--sh-cream)",
-                margin: "0.5rem 0 0",
-                lineHeight: 1.2,
+                color: "var(--sh-forest)",
+                margin: "0.75rem 0 1.5rem",
+                lineHeight: 1.15,
               }}
             >
               Productos Naturistas
             </h2>
-          </div>
-
-          <hr style={dividerStyle} />
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", color: "var(--sh-cream-2)" }}>
-              <span style={{ color: "var(--sh-mint)", marginTop: 2, flexShrink: 0 }}>
-                <ClockIcon />
-              </span>
-              <div>
-                <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--sh-cream)", fontWeight: 500 }}>
-                  Lunes a Sábado
-                </p>
-                <p style={{ margin: "0.1rem 0 0", fontSize: "0.8rem", fontWeight: 300 }}>
-                  8:00 am – 6:00 pm
-                </p>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", color: "var(--sh-cream-2)" }}>
-              <span style={{ color: "var(--sh-mint)", marginTop: 2, flexShrink: 0 }}>
-                <MapPinIcon />
-              </span>
-              <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: 300, lineHeight: 1.6 }}>
-                Santa Rosa de Cabal, Risaralda
-              </p>
-            </div>
-          </div>
-
-          <a
-            href={`https://wa.me/${WA_TIENDA}?text=Hola%2C%20me%20gustar%C3%ADa%20consultar%20sobre%20sus%20productos`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.6rem",
-              background: "#25d366",
-              color: "#fff",
-              textDecoration: "none",
-              padding: "0.85rem 1.5rem",
-              fontSize: "0.75rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              fontWeight: 500,
-              transition: "opacity 0.2s",
-            }}
-          >
-            <WhatsAppIcon />
-            Escribir por WhatsApp
-          </a>
-        </div>
-
-        {/* Hostal */}
-        <div
-          style={{
-            background: "var(--sh-dark-2)",
-            border: "1px solid rgba(228,215,184,0.08)",
-            padding: "2.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2rem",
-          }}
-        >
-          <div>
-            <p style={labelStyle}>Hospedaje · Reservas</p>
-            <h2
+            <p
               style={{
-                fontFamily: "var(--sh-serif)",
-                fontSize: "1.9rem",
-                fontWeight: 400,
-                color: "var(--sh-cream)",
-                margin: "0.5rem 0 0",
-                lineHeight: 1.2,
+                fontSize: "0.88rem",
+                color: "var(--sh-forest)",
+                fontWeight: 300,
+                lineHeight: 1.8,
+                maxWidth: "34ch",
               }}
             >
-              Hostal Siete Hierbas
-            </h2>
+              Tés, tinturas, aceites y preparados elaborados con plantas del
+              Eje Cafetero. Consultanos cualquier duda sobre nuestros productos
+              o hacé tu pedido directamente por WhatsApp.
+            </p>
           </div>
 
-          <hr style={dividerStyle} />
+          {/* ── Separador vertical ── */}
+          <div className="sh-contact-divider" style={{ background: "rgba(228,215,184,0.08)", margin: "2rem 0" }} />
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", color: "var(--sh-cream-2)" }}>
-              <span style={{ color: "var(--sh-gold)", marginTop: 2, flexShrink: 0 }}>
-                <ClockIcon />
-              </span>
-              <div>
-                <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--sh-cream)", fontWeight: 500 }}>
-                  Check-in · Check-out
-                </p>
-                <p style={{ margin: "0.1rem 0 0", fontSize: "0.8rem", fontWeight: 300 }}>
-                  3:00 pm · 12:00 pm
-                </p>
+          {/* ── Columna derecha: datos + CTA ── */}
+          <div
+            style={{
+              padding: "3.5rem 3rem 3.5rem 3.5rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: "2.5rem",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                <span style={{ color: "var(--sh-forest)", marginTop: 2, flexShrink: 0 }}>
+                  <ClockIcon />
+                </span>
+                <div>
+                  <p style={{ margin: 0, fontSize: "0.82rem", color: "var(--sh-cream)", fontWeight: 500 }}>
+                    Lunes a Sábado
+                  </p>
+                  <p style={{ margin: "0.2rem 0 0", fontSize: "0.82rem", color: "var(--sh-cream-2)", fontWeight: 300 }}>
+                    8:00 am – 6:00 pm
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                <span style={{ color: "var(--sh-forest)", marginTop: 2, flexShrink: 0 }}>
+                  <MapPinIcon />
+                </span>
+                <div>
+                  <p style={{ margin: 0, fontSize: "0.82rem", color: "var(--sh-cream)", fontWeight: 500 }}>
+                    Santa Rosa de Cabal
+                  </p>
+                  <p style={{ margin: "0.2rem 0 0", fontSize: "0.82rem", color: "var(--sh-cream-2)", fontWeight: 300 }}>
+                    Risaralda, Colombia
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", color: "var(--sh-cream-2)" }}>
-              <span style={{ color: "var(--sh-gold)", marginTop: 2, flexShrink: 0 }}>
-                <MapPinIcon />
-              </span>
-              <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: 300, lineHeight: 1.6 }}>
-                Santa Rosa de Cabal, Risaralda<br />
-                A minutos de los termales
-              </p>
-            </div>
+            <a
+              href={`https://wa.me/${WA_TIENDA}?text=Hola%2C%20me%20gustar%C3%ADa%20consultar%20sobre%20sus%20productos`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.6rem",
+                background: "#25d366",
+                color: "#fff",
+                textDecoration: "none",
+                padding: "1rem 1.5rem",
+                fontSize: "0.75rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
+            >
+              <WhatsAppIcon />
+              Escribir por WhatsApp
+            </a>
           </div>
-
-          <a
-            href={`https://wa.me/${WA_HOSTAL}?text=Hola%2C%20quisiera%20consultar%20disponibilidad%20del%20hostal`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.6rem",
-              background: "#25d366",
-              color: "#fff",
-              textDecoration: "none",
-              padding: "0.85rem 1.5rem",
-              fontSize: "0.75rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              fontWeight: 500,
-              transition: "opacity 0.2s",
-            }}
-          >
-            <WhatsAppIcon />
-            Consultar disponibilidad
-          </a>
         </div>
       </section>
+
+      <style>{`
+        .sh-contact-card { grid-template-columns: 1fr 1px 1fr !important; }
+        @media (max-width: 640px) {
+          .sh-contact-card { grid-template-columns: 1fr !important; }
+          .sh-contact-divider { display: none !important; }
+        }
+      `}</style>
 
       {/* ── REDES SOCIALES ──────────────────────────────── */}
       <section
@@ -299,7 +246,7 @@ export default function ContactoPage() {
           }}
         >
           <div>
-            <p style={labelStyle}>Seguinos</p>
+            <p style={labelStyle}>Síguenos</p>
             <p
               style={{
                 margin: "0.4rem 0 0",
@@ -308,11 +255,11 @@ export default function ContactoPage() {
                 fontWeight: 300,
               }}
             >
-              Recetas, tips y novedades del hostal
+              Recetas, tips y novedades de la herbolaria
             </p>
           </div>
           <a
-            href="https://instagram.com/sietehierbas"
+            href="https://www.instagram.com/sietehierbasbotanicos/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -330,7 +277,7 @@ export default function ContactoPage() {
             }}
           >
             <InstagramIcon />
-            @sietehierbas
+            @sietehierbasbotanicos
           </a>
         </div>
       </section>

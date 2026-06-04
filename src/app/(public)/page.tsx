@@ -5,12 +5,9 @@ import { ScrollRevealInit } from "@/components/public/scroll-reveal-init";
 import { AnimatedCounter } from "@/components/public/animated-counter";
 import { TestimonialMarquee } from "@/components/public/testimonial-marquee";
 import { HeroSlider } from "@/components/public/hero-slider";
-import { HostalImageSlider } from "@/components/public/hostal-image-slider";
 import { PopupPromo } from "@/components/public/popup-promo";
 import { getProductos } from "@/lib/queries/productos";
-import { getHabitacionDestacada } from "@/lib/queries/habitaciones";
 import { getSiteConfig, getHeroSlides } from "@/lib/queries/site-config";
-import { formatCOP } from "@/lib/format";
 
 // ── BOTANICAL ICONS ──────────────────────────────────────────────────
 
@@ -81,13 +78,13 @@ function ArrowRight({ size = 16 }) {
 function BotanicalDivider() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", padding: "1.5rem 0", maxWidth: 1200, margin: "0 auto" }}>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, rgba(201,146,58,0.3))" }} />
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, var(--sh-wood))" }} />
       <svg width="40" height="20" viewBox="0 0 40 20" fill="none">
-        <path d="M20 10 C20 10 14 4 8 6 C6 10 8 14 12 13 C15 12 16 9 20 10" stroke="#c9923a" strokeWidth="0.8" fill="none" opacity="0.6" />
-        <path d="M20 10 C20 10 26 4 32 6 C34 10 32 14 28 13 C25 12 24 9 20 10" stroke="#c9923a" strokeWidth="0.8" fill="none" opacity="0.6" />
-        <circle cx="20" cy="10" r="1.5" fill="#c9923a" opacity="0.5" />
+        <path d="M20 10 C20 10 14 4 8 6 C6 10 8 14 12 13 C15 12 16 9 20 10" stroke="var(--sh-wood)" strokeWidth="1" fill="none" opacity="1" />
+        <path d="M20 10 C20 10 26 4 32 6 C34 10 32 14 28 13 C25 12 24 9 20 10" stroke="var(--sh-wood)" strokeWidth="1" fill="none" opacity="1" />
+        <circle cx="20" cy="10" r="1.5" fill="var(--sh-wood)" opacity="1" />
       </svg>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, rgba(201,146,58,0.3))" }} />
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, var(--sh-wood))" }} />
     </div>
   );
 }
@@ -156,9 +153,8 @@ function getIconByName(name: string): React.ReactNode {
 }
 
 export default async function Home() {
-  const [destacados, habitacionDestacada, siteConfig, heroSlides] = await Promise.all([
+  const [destacados, siteConfig, heroSlides] = await Promise.all([
     getProductos({ soloDestacados: true, limit: 4 }),
-    getHabitacionDestacada(),
     getSiteConfig(),
     getHeroSlides(),
   ]);
@@ -206,7 +202,7 @@ export default async function Home() {
         .sh-product-card:hover .sh-card-overlay { opacity: 1; }
         .sh-exp-card:hover {
           border-color: rgba(201,146,58,0.3) !important;
-          background: rgba(201,146,58,0.04) !important;
+          background: var(--sh-forest) !important;
           transform: translateY(-6px);
         }
       `}</style>
@@ -354,9 +350,6 @@ export default async function Home() {
                 <Link href="/tienda" style={btnPrimaryStyle}>
                   Explorar tienda <ArrowRight size={14} />
                 </Link>
-                <Link href="/hostal" style={btnOutlineStyle}>
-                  Reservar estadía
-                </Link>
               </div>
             </div>
 
@@ -398,8 +391,8 @@ export default async function Home() {
       >
         <div className="sh-layout-stats">
           {[
-            { end: 7, suffix: "", label: "Hierbas fundacionales" },
-            { end: 12, suffix: "+", label: "Años de historia" },
+            { end: 4, suffix: "", label: "Décadas de tradición" },
+            { end: 12, suffix: "+", label: "Años de experiencia" },
             { end: 1, suffix: "", label: "Lugar único en Colombia" },
           ].map((s, i) => (
             <div
@@ -422,9 +415,10 @@ export default async function Home() {
               <div
                 style={{
                   fontSize: "0.65rem",
+                  fontWeight: "bold",
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
-                  color: "var(--sh-gold)",
+                  color: "var(--sh-forest)",
                 }}
               >
                 {s.label}
@@ -459,18 +453,18 @@ export default async function Home() {
               style={{
                 fontFamily: "var(--sh-serif)",
                 fontSize: "clamp(2rem,4vw,3.2rem)",
-                fontWeight: 300,
+                fontWeight: 500,
                 lineHeight: 1.2,
                 marginBottom: "2rem",
-                color: "var(--sh-cream)",
+                color: "var(--sh-dark-olive)",
               }}
             >
               {siteConfig.historia_titulo}
             </h2>
-            <p style={{ color: "var(--sh-cream-2)", lineHeight: 1.9, marginBottom: "1.5rem", fontSize: "0.9rem" }}>
+            <p style={{ color: "var(--sh-forest)", lineHeight: 1.9, marginBottom: "1.5rem", fontSize: "0.9rem" }}>
               {siteConfig.historia_parrafo1}
             </p>
-            <p style={{ color: "var(--sh-cream-2)", lineHeight: 1.9, marginBottom: "2.5rem", fontSize: "0.9rem" }}>
+            <p style={{ color: "var(--sh-forest)", lineHeight: 1.9, marginBottom: "2.5rem", fontSize: "0.9rem" }}>
               {siteConfig.historia_parrafo2}
             </p>
             <Link href="/contacto" style={btnOutlineStyle}>
@@ -608,132 +602,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── EL HOSTAL ─────────────────────────────────────────── */}
-      <section
-        style={{ padding: "clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem)" }}
-      >
-        <div
-          className="sh-two-col"
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "5rem",
-            alignItems: "center",
-          }}
-        >
-          <div className="sh-reveal-left sh-hostal-img-wrapper">
-            {habitacionDestacada && habitacionDestacada.imagenes.length > 0 ? (
-              <HostalImageSlider
-                imagenes={habitacionDestacada.imagenes}
-                nombre={habitacionDestacada.nombre}
-                height={550}
-              />
-            ) : (
-              <ImgPlaceholder
-                label="Habitación hospedaje / jardín de bienestar"
-                height={550}
-                icon={<MoonIcon size={32} color="var(--sh-cream-3)" />}
-              />
-            )}
-            <div
-              className="sh-hostal-price-badge"
-              style={{
-                position: "absolute",
-                top: "2rem",
-                right: "-2rem",
-                background: "rgba(13,16,8,0.9)",
-                border: "1px solid rgba(201,146,58,0.3)",
-                padding: "1.2rem 1.5rem",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <div style={{ fontFamily: "var(--sh-serif)", fontSize: "1.5rem", color: "var(--sh-cream)" }}>
-                Desde
-              </div>
-              <div style={{ fontFamily: "var(--sh-serif)", fontSize: "2.2rem", fontStyle: "italic", color: "var(--sh-gold)" }}>
-                {habitacionDestacada ? formatCOP(habitacionDestacada.precio_noche) : "$150.000"}
-              </div>
-              <div style={{ fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sh-cream-3)" }}>
-                por noche / persona
-              </div>
-            </div>
-          </div>
-
-          <div className="sh-reveal-right">
-            <Eyebrow>{siteConfig.hostal_subtitulo}</Eyebrow>
-            <h2
-              style={{
-                fontFamily: "var(--sh-serif)",
-                fontSize: "clamp(2rem,4vw,3.2rem)",
-                fontWeight: 300,
-                lineHeight: 1.2,
-                marginBottom: "2rem",
-                color: "var(--sh-cream)",
-              }}
-            >
-              {siteConfig.hostal_titulo}
-            </h2>
-            <p
-              style={{
-                color: "var(--sh-cream-2)",
-                lineHeight: 1.9,
-                marginBottom: "2.5rem",
-                fontSize: "0.9rem",
-              }}
-            >
-              {siteConfig.hostal_parrafo}
-            </p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.9rem",
-                marginBottom: "2.5rem",
-              }}
-            >
-              {siteConfig.hostal_caracteristicas.map((item) => (
-                <div
-                  key={item}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.75rem",
-                    fontSize: "0.85rem",
-                    color: "var(--sh-cream-2)",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 6,
-                      height: 6,
-                      background: "var(--sh-mint)",
-                      borderRadius: "50%",
-                      flexShrink: 0,
-                    }}
-                  />
-                  {item}
-                </div>
-              ))}
-            </div>
-            <Link href="/hostal" style={btnPrimaryStyle}>
-              Reservar ahora <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── BOTANICAL DIVIDER ─────────────────────────────────── */}
-      <div style={{ padding: "0 clamp(1.5rem,5vw,4rem)" }}>
-        <BotanicalDivider />
-      </div>
-
       {/* ── ¿POR QUÉ ELEGIRNOS? ───────────────────────────────── */}
       <section
         style={{
           padding: "clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem)",
-          background: "var(--sh-dark-2)",
+          background: "var(--sh-dark)",
         }}
       >
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -783,7 +656,7 @@ export default async function Home() {
             }}
           >
             Lo que dicen nuestros{" "}
-            <em style={{ color: "var(--sh-gold)" }}>huéspedes</em>
+            <em style={{ color: "var(--sh-gold)" }}>clientes</em>
           </h2>
         </div>
         <TestimonialMarquee />
@@ -830,9 +703,9 @@ export default async function Home() {
               marginBottom: "1.2rem",
             }}
           >
-            Te esperamos en
+            Te esperamos en nuestro
             <br />
-            <em style={{ color: "var(--sh-gold)" }}>Santa Rosa de Cabal</em>
+            <em style={{ color: "var(--sh-forest)", fontWeight: "bold" }}>Paisaje Cultural Cafetero</em>
           </h2>
           <p
             className="sh-reveal"
@@ -994,9 +867,10 @@ function ProductCard({
         <div
           style={{
             fontSize: "0.6rem",
+            fontWeight: 500,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "var(--sh-mint)",
+            color: "var(--sh-forest)",
             marginBottom: "0.4rem",
           }}
         >
@@ -1005,6 +879,7 @@ function ProductCard({
         <div
           style={{
             fontFamily: "var(--sh-serif)",
+            fontWeight:"bold",
             fontSize: "1.1rem",
             color: "var(--sh-cream)",
           }}
@@ -1014,6 +889,7 @@ function ProductCard({
         <div
           style={{
             fontSize: "0.82rem",
+            fontWeight: 500,
             color: "var(--sh-gold)",
             marginTop: "0.3rem",
           }}
@@ -1046,7 +922,7 @@ function ExperienceCard({
         gap: "1.2rem",
         padding: "2.5rem 2rem",
         border: "1px solid rgba(228,215,184,0.07)",
-        background: "rgba(255,255,255,0.02)",
+        background: "var(--sh-forest)",
         transition:
           "border-color 0.4s, background 0.4s, transform 0.4s",
         cursor: "default",
@@ -1115,7 +991,7 @@ const btnPrimaryStyle: React.CSSProperties = {
   alignItems: "center",
   gap: "0.6rem",
   background: "var(--sh-gold)",
-  color: "var(--sh-dark)",
+  color: "var(--sh-cream)",
   fontFamily: "var(--sh-sans)",
   fontSize: "0.72rem",
   letterSpacing: "0.18em",
@@ -1130,12 +1006,12 @@ const btnOutlineStyle: React.CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
   gap: "0.6rem",
-  background: "transparent",
+  background: "var(--sh-forest)",
   color: "var(--sh-cream)",
   fontFamily: "var(--sh-sans)",
   fontSize: "0.72rem",
   letterSpacing: "0.18em",
-  textTransform: "uppercase",
+  textTransform: "uppercase",  
   fontWeight: 400,
   padding: "0.9rem 2rem",
   border: "1px solid rgba(228,215,184,0.35)",

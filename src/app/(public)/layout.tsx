@@ -14,7 +14,7 @@ export default function PublicLayout({
     <CartProvider>
       <div
         className="sh-public flex min-h-screen flex-col"
-        style={{ background: "var(--sh-dark)", color: "var(--sh-cream)" }}
+        style={{ background: "var(--sh-dark)", color: "var(--sh-forest)" }}
       >
         <GrainOverlay />
         <SiteCursor />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,14 +12,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
   updateSiteConfig,
-  createHeroSlide,
+  crearHeroSlideConImagen,
   deleteHeroSlide,
+  subirImagenHome,
 } from "@/lib/actions/site-config";
 import {
   siteConfigSchema,
-  heroSlideSchema,
+  heroSlideFormSchema,
   type SiteConfigInput,
-  type HeroSlideInput,
+  type HeroSlideFormInput,
 } from "@/lib/validators/site-config";
 import type { SiteConfig, HeroSlide } from "@/lib/queries/site-config";
 
@@ -105,27 +106,43 @@ function HeroTab({ slides: initialSlides }: { slides: HeroSlide[] }) {
   const [slides, setSlides] = useState(initialSlides);
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<HeroSlideInput>({
-    resolver: zodResolver(heroSlideSchema),
+  } = useForm<HeroSlideFormInput>({
+    resolver: zodResolver(heroSlideFormSchema),
     defaultValues: { titulo: "", subtitulo: "", boton_texto: "Explorar", boton_link: "/tienda", orden: slides.length },
   });
 
-  const onAdd = async (data: HeroSlideInput) => {
+  const onAdd = async (data: HeroSlideFormInput) => {
+    const file = fileRef.current?.files?.[0];
+    if (!file) {
+      setStatus({ ok: false, message: "Seleccioná una imagen para el slide." });
+      return;
+    }
     setLoading(true);
-    const result = await createHeroSlide(data);
+    const fd = new FormData();
+    fd.append("imagen", file);
+    fd.append("titulo", data.titulo);
+    fd.append("subtitulo", data.subtitulo ?? "");
+    fd.append("boton_texto", data.boton_texto);
+    fd.append("boton_link", data.boton_link);
+    fd.append("orden", String(data.orden));
+    const result = await crearHeroSlideConImagen(fd);
     if (result.ok) {
       setSlides((prev) => [
         ...prev,
-        { id: crypto.randomUUID(), ...data, subtitulo: data.subtitulo ?? null },
+        { id: crypto.randomUUID(), imagen_url: preview ?? "", ...data, subtitulo: data.subtitulo ?? null },
       ]);
       reset({ titulo: "", subtitulo: "", boton_texto: "Explorar", boton_link: "/tienda", orden: slides.length + 1 });
-      setStatus({ ok: true, message: "Slide agregado. Recargá la página para ver el preview." });
+      if (fileRef.current) fileRef.current.value = "";
+      setPreview(null);
+      setStatus({ ok: true, message: "Slide agregado." });
     } else {
       setStatus({ ok: false, message: result.error ?? "Error al agregar." });
     }
@@ -183,9 +200,21 @@ function HeroTab({ slides: initialSlides }: { slides: HeroSlide[] }) {
         <CardContent>
           <form onSubmit={handleSubmit(onAdd)} className="space-y-4">
             <div className="space-y-1.5">
-              <Label>URL de imagen</Label>
-              <Input placeholder="https://..." {...register("imagen_url")} />
-              {errors.imagen_url && <p className="text-xs text-red-500">{errors.imagen_url.message}</p>}
+              <Label>Imagen del slide</Label>
+              <Input
+                ref={fileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  setPreview(f ? URL.createObjectURL(f) : null);
+                }}
+              />
+              {preview && (
+                <div className="h-28 w-full overflow-hidden rounded-lg border bg-zinc-100">
+                  <img src={preview} alt="Preview" className="h-full w-full object-cover" />
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -232,15 +261,37 @@ function HeroTab({ slides: initialSlides }: { slides: HeroSlide[] }) {
 function HistoriaTab({ config }: { config: SiteConfig }) {
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(config.historia_imagen_url ?? null);
+  const imgFileRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<SiteConfigInput>({
     resolver: zodResolver(siteConfigSchema),
     defaultValues: config as SiteConfigInput,
   });
+
+  const handleUploadImagen = async () => {
+    const file = imgFileRef.current?.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError(null);
+    const fd = new FormData();
+    fd.append("imagen", file);
+    const result = await subirImagenHome(fd);
+    if (result.ok && result.url) {
+      setValue("historia_imagen_url", result.url);
+      setImagePreview(result.url);
+    } else {
+      setUploadError(result.error ?? "Error al subir.");
+    }
+    setUploading(false);
+  };
 
   const onSubmit = async (data: SiteConfigInput) => {
     setLoading(true);
@@ -287,9 +338,28 @@ function HistoriaTab({ config }: { config: SiteConfig }) {
             {errors.historia_parrafo2 && <p className="text-xs text-red-500">{errors.historia_parrafo2.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label>URL de imagen (opcional)</Label>
-            <Input placeholder="https://..." {...register("historia_imagen_url")} />
-            {errors.historia_imagen_url && <p className="text-xs text-red-500">{errors.historia_imagen_url.message}</p>}
+            <Label>Imagen de la sección (opcional)</Label>
+            {imagePreview && (
+              <div className="mb-2 h-32 w-48 overflow-hidden rounded-lg border bg-zinc-100">
+                <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Input
+                ref={imgFileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) setImagePreview(URL.createObjectURL(f));
+                }}
+              />
+              <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={handleUploadImagen}>
+                {uploading ? "Subiendo..." : "Subir"}
+              </Button>
+            </div>
+            {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+            <p className="text-xs text-zinc-400">Subí la imagen primero y después guardá el formulario.</p>
           </div>
           <Button type="submit" disabled={loading}>
             {loading ? "Guardando..." : "Guardar"}
@@ -378,6 +448,10 @@ function HospedajeTab({ config }: { config: SiteConfig }) {
 function PopupTab({ config }: { config: SiteConfig }) {
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(config.popup_imagen_url ?? null);
+  const imgFileRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -391,6 +465,23 @@ function PopupTab({ config }: { config: SiteConfig }) {
   });
 
   const activo = watch("popup_activo");
+
+  const handleUploadImagen = async () => {
+    const file = imgFileRef.current?.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError(null);
+    const fd = new FormData();
+    fd.append("imagen", file);
+    const result = await subirImagenHome(fd);
+    if (result.ok && result.url) {
+      setValue("popup_imagen_url", result.url);
+      setImagePreview(result.url);
+    } else {
+      setUploadError(result.error ?? "Error al subir.");
+    }
+    setUploading(false);
+  };
 
   const onSubmit = async (data: SiteConfigInput) => {
     setLoading(true);
@@ -420,16 +511,28 @@ function PopupTab({ config }: { config: SiteConfig }) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="popup_imagen_url">URL de la imagen</Label>
-            <Input
-              id="popup_imagen_url"
-              placeholder="https://..."
-              {...register("popup_imagen_url")}
-            />
-            {errors.popup_imagen_url && (
-              <p className="text-xs text-red-500">{errors.popup_imagen_url.message as string}</p>
+            <Label>Imagen del popup</Label>
+            {imagePreview && (
+              <div className="mb-2 h-40 w-32 overflow-hidden rounded-lg border bg-zinc-100">
+                <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+              </div>
             )}
-            <p className="text-xs text-zinc-400">Imagen que se mostrará en el popup. Recomendado: formato cuadrado o vertical.</p>
+            <div className="flex items-center gap-2">
+              <Input
+                ref={imgFileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) setImagePreview(URL.createObjectURL(f));
+                }}
+              />
+              <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={handleUploadImagen}>
+                {uploading ? "Subiendo..." : "Subir"}
+              </Button>
+            </div>
+            {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+            <p className="text-xs text-zinc-400">Recomendado: formato cuadrado o vertical. Subí primero y después guardá.</p>
           </div>
 
           <div className="space-y-1.5">
