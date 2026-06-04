@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   updateSiteConfig,
   crearHeroSlideConImagen,
+  actualizarHeroSlideConImagen,
   deleteHeroSlide,
   subirImagenHome,
 } from "@/lib/actions/site-config";
@@ -102,11 +103,120 @@ function InfoBarTab({ config }: { config: SiteConfig }) {
   );
 }
 
+type SlideEditFormProps = {
+  slide: HeroSlide;
+  onSaved: (updated: HeroSlide) => void;
+  onCancel: () => void;
+};
+
+function SlideEditForm({ slide, onSaved, onCancel }: SlideEditFormProps) {
+  const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(slide.imagen_url);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const { register, handleSubmit, formState: { errors } } = useForm<HeroSlideFormInput>({
+    resolver: zodResolver(heroSlideFormSchema),
+    defaultValues: {
+      titulo: slide.titulo,
+      subtitulo: slide.subtitulo ?? "",
+      boton_texto: slide.boton_texto,
+      boton_link: slide.boton_link,
+      orden: slide.orden,
+    },
+  });
+
+  const onSubmit = async (data: HeroSlideFormInput) => {
+    setSaving(true);
+    setEditError(null);
+    const fd = new FormData();
+    const file = fileRef.current?.files?.[0];
+    if (file) fd.append("imagen", file);
+    fd.append("imagen_url_actual", slide.imagen_url);
+    fd.append("titulo", data.titulo);
+    fd.append("subtitulo", data.subtitulo ?? "");
+    fd.append("boton_texto", data.boton_texto);
+    fd.append("boton_link", data.boton_link);
+    fd.append("orden", String(data.orden));
+    const result = await actualizarHeroSlideConImagen(slide.id, fd);
+    if (result.ok) {
+      onSaved({
+        ...slide,
+        imagen_url: file && preview ? preview : slide.imagen_url,
+        ...data,
+        subtitulo: data.subtitulo ?? null,
+      });
+    } else {
+      setEditError(result.error ?? "Error al guardar.");
+    }
+    setSaving(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-3 rounded-lg border bg-zinc-50 p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Editar slide</p>
+      <div className="space-y-1.5">
+        <Label className="text-xs">Nueva imagen (opcional)</Label>
+        {preview && (
+          <div className="h-20 w-32 overflow-hidden rounded border bg-zinc-100">
+            <img src={preview} alt="Preview" className="h-full w-full object-cover" />
+          </div>
+        )}
+        <Input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) setPreview(URL.createObjectURL(f));
+          }}
+        />
+        <p className="text-xs text-zinc-400">Dejá vacío para mantener la imagen actual.</p>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <Label className="text-xs">Título</Label>
+          <Input {...register("titulo")} />
+          {errors.titulo && <p className="text-xs text-red-500">{errors.titulo.message}</p>}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Subtítulo</Label>
+          <Input {...register("subtitulo")} />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Texto del botón</Label>
+          <Input {...register("boton_texto")} />
+          {errors.boton_texto && <p className="text-xs text-red-500">{errors.boton_texto.message}</p>}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Link del botón</Label>
+          <Input {...register("boton_link")} />
+          {errors.boton_link && <p className="text-xs text-red-500">{errors.boton_link.message}</p>}
+        </div>
+      </div>
+      <div className="w-28 space-y-1">
+        <Label className="text-xs">Orden</Label>
+        <Input type="number" min={0} {...register("orden", { valueAsNumber: true })} />
+      </div>
+      {editError && <p className="text-xs text-red-500">{editError}</p>}
+      <div className="flex gap-2">
+        <Button type="submit" size="sm" disabled={saving}>
+          {saving ? "Guardando..." : "Guardar cambios"}
+        </Button>
+        <Button type="button" size="sm" variant="outline" onClick={onCancel}>
+          Cancelar
+        </Button>
+      </div>
+    </form>
+  );
+}
+
 function HeroTab({ slides: initialSlides }: { slides: HeroSlide[] }) {
   const [slides, setSlides] = useState(initialSlides);
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -170,22 +280,43 @@ function HeroTab({ slides: initialSlides }: { slides: HeroSlide[] }) {
           ) : (
             <ul className="space-y-3">
               {slides.map((s) => (
-                <li key={s.id} className="flex items-center gap-3 rounded-lg border p-3">
-                  <div className="h-12 w-20 flex-shrink-0 overflow-hidden rounded bg-zinc-100">
-                    <img src={s.imagen_url} alt={s.titulo} className="h-full w-full object-cover" />
+                <li key={s.id} className="rounded-lg border">
+                  <div className="flex items-center gap-3 p-3">
+                    <div className="h-12 w-20 flex-shrink-0 overflow-hidden rounded bg-zinc-100">
+                      <img src={s.imagen_url} alt={s.titulo} className="h-full w-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="truncate text-sm font-medium">{s.titulo || "(sin título)"}</p>
+                      <p className="truncate text-xs text-zinc-500">{s.boton_texto} → {s.boton_link}</p>
+                    </div>
+                    <span className="text-xs text-zinc-400">#{s.orden}</span>
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(s.id)}
+                      className="text-xs text-zinc-600 hover:text-zinc-900"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(s.id)}
+                      className="text-xs text-red-500 hover:text-red-700"
+                    >
+                      Eliminar
+                    </button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="truncate text-sm font-medium">{s.titulo || "(sin título)"}</p>
-                    <p className="truncate text-xs text-zinc-500">{s.boton_texto} → {s.boton_link}</p>
-                  </div>
-                  <span className="text-xs text-zinc-400">#{s.orden}</span>
-                  <button
-                    type="button"
-                    onClick={() => onDelete(s.id)}
-                    className="text-xs text-red-500 hover:text-red-700"
-                  >
-                    Eliminar
-                  </button>
+                  {editingId === s.id && (
+                    <div className="px-3 pb-3">
+                      <SlideEditForm
+                        slide={s}
+                        onSaved={(updated) => {
+                          setSlides((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
+                          setEditingId(null);
+                        }}
+                        onCancel={() => setEditingId(null)}
+                      />
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
