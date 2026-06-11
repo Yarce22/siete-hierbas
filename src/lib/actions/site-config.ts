@@ -16,8 +16,7 @@ export async function updateSiteConfig(data: unknown): Promise<{ ok: boolean; er
 
   const { error } = await supabase
     .from("site_config")
-    .update(parsed.data)
-    .eq("id", CONFIG_ID);
+    .upsert({ id: CONFIG_ID, ...parsed.data });
 
   if (error) return { ok: false, error: error.message };
 

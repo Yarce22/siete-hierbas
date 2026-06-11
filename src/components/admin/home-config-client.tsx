@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -39,6 +40,7 @@ function Feedback({ ok, message }: { ok: boolean; message: string }) {
 }
 
 function InfoBarTab({ config }: { config: SiteConfig }) {
+  const router = useRouter();
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -59,6 +61,7 @@ function InfoBarTab({ config }: { config: SiteConfig }) {
     setLoading(true);
     const result = await updateSiteConfig(data);
     setStatus({ ok: result.ok, message: result.ok ? "Guardado correctamente." : (result.error ?? "Error al guardar.") });
+    if (result.ok) router.refresh();
     setLoading(false);
   };
 
@@ -390,6 +393,7 @@ function HeroTab({ slides: initialSlides }: { slides: HeroSlide[] }) {
 }
 
 function HistoriaTab({ config }: { config: SiteConfig }) {
+  const router = useRouter();
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -428,6 +432,7 @@ function HistoriaTab({ config }: { config: SiteConfig }) {
     setLoading(true);
     const result = await updateSiteConfig(data);
     setStatus({ ok: result.ok, message: result.ok ? "Guardado correctamente." : (result.error ?? "Error al guardar.") });
+    if (result.ok) router.refresh();
     setLoading(false);
   };
 
@@ -503,6 +508,7 @@ function HistoriaTab({ config }: { config: SiteConfig }) {
 }
 
 function HospedajeTab({ config }: { config: SiteConfig }) {
+  const router = useRouter();
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [caracteristicasText, setCaracteristicasText] = useState(
@@ -526,6 +532,7 @@ function HospedajeTab({ config }: { config: SiteConfig }) {
       .filter(Boolean);
     const result = await updateSiteConfig({ ...data, hostal_caracteristicas });
     setStatus({ ok: result.ok, message: result.ok ? "Guardado correctamente." : (result.error ?? "Error al guardar.") });
+    if (result.ok) router.refresh();
     setLoading(false);
   };
 
@@ -577,6 +584,7 @@ function HospedajeTab({ config }: { config: SiteConfig }) {
 }
 
 function PopupTab({ config }: { config: SiteConfig }) {
+  const router = useRouter();
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -618,6 +626,7 @@ function PopupTab({ config }: { config: SiteConfig }) {
     setLoading(true);
     const result = await updateSiteConfig(data);
     setStatus({ ok: result.ok, message: result.ok ? "Guardado correctamente." : (result.error ?? "Error al guardar.") });
+    if (result.ok) router.refresh();
     setLoading(false);
   };
 
@@ -692,6 +701,7 @@ function PopupTab({ config }: { config: SiteConfig }) {
 const ICON_OPTIONS = ["leaf", "flower", "drop", "moon", "sun", "shield", "heart", "star"];
 
 function PorQueTab({ config }: { config: SiteConfig }) {
+  const router = useRouter();
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -714,6 +724,7 @@ function PorQueTab({ config }: { config: SiteConfig }) {
     setLoading(true);
     const result = await updateSiteConfig(data);
     setStatus({ ok: result.ok, message: result.ok ? "Guardado correctamente." : (result.error ?? "Error al guardar.") });
+    if (result.ok) router.refresh();
     setLoading(false);
   };
 
