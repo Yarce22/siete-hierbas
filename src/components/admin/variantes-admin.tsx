@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { crearVariante, eliminarVariante } from "@/lib/actions/productos";
+import { actualizarVariante, crearVariante, eliminarVariante } from "@/lib/actions/productos";
 import { formatCOP } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,100 @@ type Variante = {
   sku: string | null;
 };
 
+function VarianteEditForm({
+  variante,
+  productoId,
+  onDone,
+}: {
+  variante: Variante;
+  productoId: string;
+  onDone: () => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    const result = await actualizarVariante(variante.id, productoId, new FormData(e.currentTarget));
+    setLoading(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Variante actualizada");
+      onDone();
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-2 space-y-3 rounded-lg border bg-zinc-50 p-4">
+      <p className="text-sm font-medium text-zinc-700">Editando: {variante.nombre}</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor={`edit-nombre-${variante.id}`}>Nombre</Label>
+          <Input
+            id={`edit-nombre-${variante.id}`}
+            name="nombre"
+            required
+            defaultValue={variante.nombre}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor={`edit-precio-${variante.id}`}>Precio (COP)</Label>
+          <Input
+            id={`edit-precio-${variante.id}`}
+            name="precio"
+            type="number"
+            min="0"
+            required
+            defaultValue={variante.precio}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor={`edit-stock-${variante.id}`}>Stock</Label>
+          <Input
+            id={`edit-stock-${variante.id}`}
+            name="stock"
+            type="number"
+            min="0"
+            defaultValue={variante.stock}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor={`edit-stock-min-${variante.id}`}>
+            Stock mínimo <span className="text-xs text-zinc-500">(alerta)</span>
+          </Label>
+          <Input
+            id={`edit-stock-min-${variante.id}`}
+            name="stock_minimo"
+            type="number"
+            min="0"
+            defaultValue={variante.stock_minimo}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor={`edit-sku-${variante.id}`}>
+            SKU <span className="text-xs text-zinc-500">(opcional)</span>
+          </Label>
+          <Input
+            id={`edit-sku-${variante.id}`}
+            name="sku"
+            defaultValue={variante.sku ?? ""}
+            placeholder="LAV-250"
+          />
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <Button type="submit" size="sm" disabled={loading}>
+          {loading ? "Guardando..." : "Guardar cambios"}
+        </Button>
+        <Button type="button" size="sm" variant="ghost" onClick={onDone}>
+          Cancelar
+        </Button>
+      </div>
+    </form>
+  );
+}
+
 export function VariantesAdmin({
   productoId,
   variantes,
@@ -27,7 +121,8 @@ export function VariantesAdmin({
   variantes: Variante[];
 }) {
   const [agregando, setAgregando] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingCrear, setLoadingCrear] = useState(false);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   async function handleEliminar(v: Variante) {
     if (!confirm(`¿Eliminar variante "${v.nombre}"?`)) return;
@@ -38,9 +133,9 @@ export function VariantesAdmin({
 
   async function handleCrear(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
+    setLoadingCrear(true);
     const result = await crearVariante(productoId, new FormData(e.currentTarget));
-    setLoading(false);
+    setLoadingCrear(false);
     if (result.error) {
       toast.error(result.error);
     } else {
@@ -62,7 +157,7 @@ export function VariantesAdmin({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setAgregando(!agregando)}
+          onClick={() => { setAgregando(!agregando); setEditandoId(null); }}
         >
           <Plus className="mr-1 size-4" />
           Agregar
@@ -79,35 +174,53 @@ export function VariantesAdmin({
       {variantes.length > 0 && (
         <ul className="divide-y rounded-lg border mb-4">
           {variantes.map((v) => (
-            <li
-              key={v.id}
-              className="flex items-center justify-between gap-4 px-4 py-3"
-            >
-              <div>
-                <p className="font-medium">{v.nombre}</p>
-                <p className="text-sm text-zinc-500">
-                  {formatCOP(v.precio)} · stock: {v.stock} (mín. {v.stock_minimo})
-                  {v.sku && ` · SKU: ${v.sku}`}
-                </p>
+            <li key={v.id}>
+              <div className="flex items-center justify-between gap-4 px-4 py-3">
+                <div>
+                  <p className="font-medium">{v.nombre}</p>
+                  <p className="text-sm text-zinc-500">
+                    {formatCOP(v.precio)} · stock: {v.stock} (mín. {v.stock_minimo})
+                    {v.sku && ` · SKU: ${v.sku}`}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditandoId(editandoId === v.id ? null : v.id)}
+                    className="text-zinc-600 hover:text-zinc-900"
+                    title="Editar variante"
+                  >
+                    {editandoId === v.id ? <X className="size-4" /> : <Pencil className="size-4" />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEliminar(v)}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+                    title="Eliminar variante"
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEliminar(v)}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
-              >
-                <Trash2 className="size-4" />
-              </Button>
+
+              {editandoId === v.id && (
+                <div className="px-4 pb-4">
+                  <VarianteEditForm
+                    variante={v}
+                    productoId={productoId}
+                    onDone={() => setEditandoId(null)}
+                  />
+                </div>
+              )}
             </li>
           ))}
         </ul>
       )}
 
       {agregando && (
-        <form
-          onSubmit={handleCrear}
-          className="rounded-lg border p-4 space-y-4"
-        >
+        <form onSubmit={handleCrear} className="rounded-lg border p-4 space-y-4">
           <p className="text-sm font-medium">Nueva variante</p>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -158,8 +271,8 @@ export function VariantesAdmin({
           </div>
 
           <div className="flex gap-2">
-            <Button type="submit" size="sm" disabled={loading}>
-              {loading ? "Guardando..." : "Guardar variante"}
+            <Button type="submit" size="sm" disabled={loadingCrear}>
+              {loadingCrear ? "Guardando..." : "Guardar variante"}
             </Button>
             <Button
               type="button"

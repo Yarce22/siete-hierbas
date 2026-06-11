@@ -164,6 +164,42 @@ export async function eliminarVariante(varianteId: string, productoId: string) {
   return { success: true };
 }
 
+export async function actualizarVariante(
+  varianteId: string,
+  productoId: string,
+  formData: FormData,
+) {
+  const raw = {
+    nombre: formData.get("nombre"),
+    precio: formData.get("precio"),
+    stock: formData.get("stock") ?? 0,
+    stock_minimo: formData.get("stock_minimo") ?? 5,
+    sku: formData.get("sku") || undefined,
+  };
+
+  const parsed = varianteSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const { supabase, error: authError } = await requireAdmin();
+  if (!supabase) return { error: authError };
+
+  const { error } = await supabase
+    .from("producto_variantes")
+    .update({
+      nombre: parsed.data.nombre,
+      precio: parsed.data.precio,
+      stock: parsed.data.stock,
+      stock_minimo: parsed.data.stock_minimo,
+      sku: parsed.data.sku || null,
+    })
+    .eq("id", varianteId);
+
+  if (error) return { error: "Error al actualizar la variante." };
+
+  revalidatePath(`/admin/productos/${productoId}`);
+  return { success: true };
+}
+
 function parseVariantesFromForm(formData: FormData) {
   const variantes: ReturnType<typeof varianteSchema.parse>[] = [];
   let i = 0;
