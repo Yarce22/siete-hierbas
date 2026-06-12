@@ -86,6 +86,9 @@ export async function SiteFooter() {
             <FooterLink href="/">Inicio</FooterLink>
             <FooterLink href="/tienda">Tienda</FooterLink>
             <FooterLink href="/contacto">Contacto</FooterLink>
+            <FooterLink href="/terminos-y-condiciones">Términos y Condiciones</FooterLink>
+            <FooterLink href="/politica-de-privacidad">Política de Privacidad</FooterLink>
+            <FooterLink href="/politica-de-cookies">Política de Cookies</FooterLink>
           </FooterCol>
 
           {/* Productos */}
@@ -155,6 +158,33 @@ export async function SiteFooter() {
             ))}
           </div>
         </div>
+
+        {/* Dev credit — centered */}
+        <p
+          style={{
+            marginTop: "1.5rem",
+            textAlign: "center",
+            fontSize: "0.68rem",
+            color: "var(--sh-cream-3)",
+            letterSpacing: "0.04em",
+          }}
+        >
+          Diseñado y desarrollado por{" "}
+          <a
+            href="https://yarces-portfolio.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "var(--sh-cream)",
+              textDecoration: "underline",
+              textUnderlineOffset: "3px",
+              fontWeight: 500,
+              transition: "color 0.3s",
+            }}
+          >
+            yarce.dev
+          </a>
+        </p>
       </div>
 
       <style>{`
