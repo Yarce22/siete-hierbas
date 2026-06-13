@@ -19,6 +19,7 @@ export default async function ProductosPage() {
        producto_variantes ( precio, stock )`,
     )
     .is("deleted_at", null)
+    .filter("producto_variantes.deleted_at", "is", null)
     .order("nombre", { ascending: true });
 
   return (

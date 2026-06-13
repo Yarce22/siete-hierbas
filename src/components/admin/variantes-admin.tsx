@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ function VarianteEditForm({
   productoId: string;
   onDone: () => void;
 }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -40,6 +42,7 @@ function VarianteEditForm({
     } else {
       toast.success("Variante actualizada");
       onDone();
+      router.refresh();
     }
   }
 
@@ -120,6 +123,7 @@ export function VariantesAdmin({
   productoId: string;
   variantes: Variante[];
 }) {
+  const router = useRouter();
   const [agregando, setAgregando] = useState(false);
   const [loadingCrear, setLoadingCrear] = useState(false);
   const [editandoId, setEditandoId] = useState<string | null>(null);
@@ -128,7 +132,10 @@ export function VariantesAdmin({
     if (!confirm(`¿Eliminar variante "${v.nombre}"?`)) return;
     const result = await eliminarVariante(v.id, productoId);
     if (result.error) toast.error(result.error);
-    else toast.success("Variante eliminada");
+    else {
+      toast.success("Variante eliminada");
+      router.refresh();
+    }
   }
 
   async function handleCrear(e: React.FormEvent<HTMLFormElement>) {
@@ -142,6 +149,7 @@ export function VariantesAdmin({
       toast.success("Variante agregada");
       setAgregando(false);
       (e.target as HTMLFormElement).reset();
+      router.refresh();
     }
   }
 
